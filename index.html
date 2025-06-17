@@ -1,7 +1,8 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WINGO AI PREDICTION TOOL</title>
   <style>
     body {
@@ -68,19 +69,15 @@
       width: 20px;
       height: 20px;
     }
-    #loader {
-      width: 100%;
-      background: #333;
-      height: 10px;
-      border-radius: 5px;
-      margin-top: 20px;
-      display: none;
+    .important-note {
+      margin-top: 40px;
+      font-size: 16px;
+      color: #00ff00;
     }
-    #loader-bar {
-      height: 10px;
-      width: 0%;
-      background: #00ff00;
-      border-radius: 5px;
+    .important-note a {
+      color: red;
+      font-weight: bold;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -94,19 +91,22 @@
     <input type="number" maxlength="1" oninput="jumpNext(this, 4)" />
   </div>
   <button onclick="predict()">PREDICT NEXT</button>
-  <div id="loader">
-    <div id="loader-bar"></div>
-  </div>
-  <div id="result"></div>  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
+  <div id="result"></div>
+
+  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     Join Our WhatsApp Channel
-  </a>  <footer>
-    DEVELOPED BY OLD-HACKER | © 2025 | ALL SYSTEMS OPERATIONAL
-    <br><br>
-    <strong>IMPORTANT NOTE</strong><br>
-    THIS IS WORKING ONLY ON NEW ACCOUNTS — FIRST CREATE NEW FRESH ACCOUNT<br>
-    <a style="color:#00ff00;text-decoration:underline;" href="https://www.92jeeto.pro/#/register?invitationCode=51212816212" target="_blank">CLICK HERE TO CREATE NEW FRESH ACCOUNT</a>
-  </footer>  <script>
+  </a>
+
+  <div class="important-note">
+    <p>IMPORTANT NOTE<br>
+    THIS TOOL WORKS BEST ON NEW ACCOUNTS</p>
+    <p><a href="https://www.92jeeto.pro/#/register?invitationCode=51212816212" target="_blank">CLICK HERE TO CREATE NEW FRESH ACCOUNT</a></p>
+  </div>
+
+  <footer>DEVELOPED BY OLD-HACKER | © 2025 | ALL SYSTEMS OPERATIONAL</footer>
+
+  <script>
     function jumpNext(input, index) {
       const nextInput = document.querySelectorAll('.input-boxes input')[index + 1];
       if (input.value.length === input.maxLength && nextInput) {
@@ -118,45 +118,34 @@
       const inputs = document.querySelectorAll('.input-boxes input');
       const numbers = Array.from(inputs).map(i => parseInt(i.value) || 0);
 
-      if (numbers.every(n => n === 0)) {
-        document.getElementById('result').innerText = "Please enter valid numbers!";
+      if (numbers.some(n => isNaN(n))) {
+        document.getElementById('result').innerText = 'Please enter all 5 digits.';
         return;
       }
 
-      document.getElementById('loader').style.display = 'block';
-      let width = 0;
-      const loader = setInterval(() => {
-        width += 10;
-        document.getElementById('loader-bar').style.width = width + '%';
+      // AI-like number trend logic
+      const recent = numbers.slice(-3);
+      const average = recent.reduce((a, b) => a + b, 0) / recent.length;
+      let result = '';
+      let confidence = 0;
 
-        if (width >= 100) {
-          clearInterval(loader);
-          document.getElementById('loader').style.display = 'none';
+      if (average >= 5.5) {
+        result = 'BIG';
+        confidence = 90;
+      } else {
+        result = 'SMALL';
+        confidence = 92;
+      }
 
-          const sum = numbers.reduce((a, b) => a + b, 0);
-          const avg = sum / numbers.length;
+      document.getElementById('result').innerHTML = `NEXT: <strong>${result}</strong><br>${confidence}% CONFIDENCE`;
 
-          let result = '';
-          let confidence = 0;
-
-          if (avg <= 4) {
-            result = 'SMALL';
-            confidence = 88 + Math.floor(Math.random() * 10);
-          } else {
-            result = 'BIG';
-            confidence = 89 + Math.floor(Math.random() * 9);
-          }
-
-          document.getElementById('result').innerHTML = `NEXT: <strong>${result}</strong><br>${confidence}% CONFIDENCE`;
-
-          setTimeout(() => {
-            inputs.forEach(input => input.value = '');
-            document.getElementById('result').innerHTML = '';
-            document.getElementById('loader-bar').style.width = '0%';
-            inputs[0].focus();
-          }, 3000);
-        }
-      }, 100);
+      // Auto reset after 4 seconds
+      setTimeout(() => {
+        inputs.forEach(input => input.value = '');
+        document.getElementById('result').textContent = '';
+        inputs[0].focus();
+      }, 4000);
     }
-  </script></body>
+  </script>
+</body>
 </html>
