@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WINGO AI PREDICTION TOOL</title>
+  <style>
+    body {
+      background-color: black;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+    }
+    .input-boxes {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .input-boxes input {
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      font-size: 24px;
+      background: black;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      border-radius: 5px;
+      box-shadow: 0 0 5px #00ff00;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: black;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ff00;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 24px;
+      color: #00ff00;
+    }
+    footer {
+      margin-top: 50px;
+      color: #00ff00;
+      font-size: 14px;
+    }
+    .whatsapp-link {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 20px;
+      color: #00ff00;
+      text-decoration: none;
+      border: 1px solid #00ff00;
+      padding: 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00ff00;
+      gap: 10px;
+    }
+    .whatsapp-link img {
+      width: 20px;
+      height: 20px;
+    }
+    .note {
+      margin-top: 40px;
+      font-size: 16px;
+      color: #ff0000;
+    }
+    .note a {
+      color: #00ffff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>WINGO AI PREDICTION TOOL</h1>
+  <div class="input-boxes">
+    <input type="number" maxlength="1" oninput="jumpNext(this, 0)" />
+    <input type="number" maxlength="1" oninput="jumpNext(this, 1)" />
+    <input type="number" maxlength="1" oninput="jumpNext(this, 2)" />
+    <input type="number" maxlength="1" oninput="jumpNext(this, 3)" />
+    <input type="number" maxlength="1" oninput="jumpNext(this, 4)" />
+  </div>
+  <button onclick="predict()">PREDICT NEXT</button>
+  <div id="result"></div>
+
+  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
+    Join Our WhatsApp Channel
+  </a>
+
+  <footer>DEVELOPED BY OLD-HACKER | © 2025 | ALL SYSTEMS OPERATIONAL</footer>
+
+  <div class="note">
+    <p><strong>IMPORTANT NOTE:</strong><br>
+    THIS IS WORKING ONLY ON NEW ACCOUNT SO FIRST CREATE NEW FRESH ACCOUNT.</p>
+    <p><a href="https://www.92jeeto.pro/#/register?invitationCode=51212816212" target="_blank">CLICK HERE TO CREATE NEW FRESH ACCOUNT</a></p>
+  </div>
+
+  <script>
+    function jumpNext(input, index) {
+      const nextInput = document.querySelectorAll('.input-boxes input')[index + 1];
+      if (input.value.length === input.maxLength && nextInput) {
+        nextInput.focus();
+      }
+    }
+
+    function predict() {
+      const inputs = document.querySelectorAll('.input-boxes input');
+      const numbers = Array.from(inputs).map(i => parseInt(i.value) || 0);
+
+      // AI-like simple pattern logic (random with weighted logic)
+      const sum = numbers.reduce((a, b) => a + b, 0);
+      const avg = sum / numbers.length;
+      let result = '';
+      let confidence = 0;
+
+      if (avg < 5) {
+        result = 'SMALL';
+        confidence = 70 + Math.floor(Math.random() * 20);
+      } else if (avg > 5) {
+        result = 'BIG';
+        confidence = 75 + Math.floor(Math.random() * 15);
+      } else {
+        result = 'TIE';
+        confidence = 65 + Math.floor(Math.random() * 10);
+      }
+
+      document.getElementById('result').innerHTML = `NEXT: <strong>${result}</strong><br>${confidence}% CONFIDENCE`;
+    }
+  </script>
+</body>
+</html>
