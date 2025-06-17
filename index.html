@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -48,6 +47,21 @@
       font-size: 24px;
       color: #00ff00;
     }
+    #loadingBar {
+      width: 0;
+      height: 10px;
+      background-color: #00ff00;
+      box-shadow: 0 0 10px #00ff00;
+      margin: 20px auto;
+      transition: width 2s ease-in-out;
+    }
+    .bar-container {
+      width: 80%;
+      height: 10px;
+      background: #222;
+      margin: auto;
+      border: 1px solid #00ff00;
+    }
     footer {
       margin-top: 50px;
       color: #00ff00;
@@ -91,61 +105,69 @@
     <input type="number" maxlength="1" oninput="jumpNext(this, 4)" />
   </div>
   <button onclick="predict()">PREDICT NEXT</button>
+  <div class="bar-container">
+    <div id="loadingBar"></div>
+  </div>
   <div id="result"></div>
-
   <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     Join Our WhatsApp Channel
   </a>
-
   <div class="important-note">
     <p>IMPORTANT NOTE<br>
     THIS TOOL WORKS BEST ON NEW ACCOUNTS</p>
     <p><a href="https://www.92jeeto.pro/#/register?invitationCode=51212816212" target="_blank">CLICK HERE TO CREATE NEW FRESH ACCOUNT</a></p>
   </div>
-
   <footer>DEVELOPED BY OLD-HACKER | © 2025 | ALL SYSTEMS OPERATIONAL</footer>
-
   <script>
     function jumpNext(input, index) {
       const nextInput = document.querySelectorAll('.input-boxes input')[index + 1];
       if (input.value.length === input.maxLength && nextInput) {
         nextInput.focus();
       }
+    }function predict() {
+  const inputs = document.querySelectorAll('.input-boxes input');
+  const numbers = Array.from(inputs).map(i => parseInt(i.value) || 0);
+
+  if (numbers.some(n => isNaN(n))) {
+    document.getElementById('result').innerText = 'Please enter all 5 digits.';
+    return;
+  }
+
+  const loadingBar = document.getElementById('loadingBar');
+  loadingBar.style.width = '0';
+  document.getElementById('result').innerText = '';
+
+  setTimeout(() => {
+    loadingBar.style.width = '100%';
+  }, 100);
+
+  setTimeout(() => {
+    const recent = numbers.slice(-3);
+    const average = recent.reduce((a, b) => a + b, 0) / recent.length;
+    let result = '';
+    let confidence = 0;
+
+    if (average >= 5.5) {
+      result = 'BIG';
+      confidence = 90 + Math.floor(Math.random() * 5);
+    } else {
+      result = 'SMALL';
+      confidence = 90 + Math.floor(Math.random() * 5);
     }
 
-    function predict() {
-      const inputs = document.querySelectorAll('.input-boxes input');
-      const numbers = Array.from(inputs).map(i => parseInt(i.value) || 0);
+    document.getElementById('result').innerHTML = `NEXT: <strong>${result}</strong><br>${confidence}% CONFIDENCE`;
 
-      if (numbers.some(n => isNaN(n))) {
-        document.getElementById('result').innerText = 'Please enter all 5 digits.';
-        return;
-      }
+    setTimeout(() => {
+      inputs.forEach(input => input.value = '');
+      document.getElementById('result').textContent = '';
+      loadingBar.style.width = '0';
+      inputs[0].focus();
+    }, 4000);
 
-      // AI-like number trend logic
-      const recent = numbers.slice(-3);
-      const average = recent.reduce((a, b) => a + b, 0) / recent.length;
-      let result = '';
-      let confidence = 0;
+  }, 2000);
+}
 
-      if (average >= 5.5) {
-        result = 'BIG';
-        confidence = 90;
-      } else {
-        result = 'SMALL';
-        confidence = 92;
-      }
-
-      document.getElementById('result').innerHTML = `NEXT: <strong>${result}</strong><br>${confidence}% CONFIDENCE`;
-
-      // Auto reset after 4 seconds
-      setTimeout(() => {
-        inputs.forEach(input => input.value = '');
-        document.getElementById('result').textContent = '';
-        inputs[0].focus();
-      }, 4000);
-    }
   </script>
 </body>
 </html>
