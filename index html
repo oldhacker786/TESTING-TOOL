@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Link Generator - OLD-HACKER</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #00ff00;
+      font-family: monospace;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #ff0000;
+      text-shadow: 0 0 5px #ff0000;
+    }
+    input, button {
+      margin: 15px;
+      padding: 10px;
+      background-color: #111;
+      color: #0f0;
+      border: 1px solid #0f0;
+      border-radius: 5px;
+    }
+    #linkBox {
+      margin-top: 20px;
+      color: #00ff00;
+      font-size: 16px;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>Instant Image Link Generator</h1>
+  <input type="file" id="imageInput" accept="image/*" />
+  <br />
+  <button onclick="uploadImage()">Upload & Get Link</button>
+  <div id="linkBox"></div>
+
+  <script>
+    async function uploadImage() {
+      const file = document.getElementById('imageInput').files[0];
+      if (!file) {
+        alert("Please select an image!");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      document.getElementById('linkBox').innerHTML = "Uploading... 🔄";
+
+      try {
+        const response = await fetch("https://0x0.st", {
+          method: "POST",
+          body: formData
+        });
+
+        const link = await response.text();
+        document.getElementById('linkBox').innerHTML = `
+          ✅ Link: <br><a href="${link}" target="_blank">${link}</a><br>
+          <button onclick="copyLink('${link}')">📋 Copy</button>
+        `;
+      } catch (e) {
+        document.getElementById('linkBox').innerText = "❌ Upload failed!";
+      }
+    }
+
+    function copyLink(text) {
+      navigator.clipboard.writeText(text);
+      alert("✅ Link copied to clipboard!");
+    }
+  </script>
+</body>
+</html>
