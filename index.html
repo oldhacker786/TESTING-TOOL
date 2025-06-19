@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>AVIATOR AI PREDICTION TOOL</title>
   <style>
     body {
@@ -23,10 +22,10 @@
       gap: 10px;
     }
     .input-boxes input {
-      width: 80px;
+      width: 70px;
       height: 40px;
       text-align: center;
-      font-size: 18px;
+      font-size: 20px;
       background-color: black;
       color: #00ff00;
       border: 2px solid red;
@@ -41,10 +40,6 @@
       border: 2px solid red;
       cursor: pointer;
     }
-    #result {
-      margin-top: 30px;
-      font-size: 24px;
-    }
     .loader {
       width: 80%;
       height: 10px;
@@ -56,6 +51,10 @@
       height: 100%;
       background: #00ff00;
       width: 0%;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 24px;
     }
     footer {
       margin-top: 30px;
@@ -77,37 +76,25 @@
       width: 20px;
       height: 20px;
     }
-    .box-red, .box-green, .box-blue {
-      max-width: 500px;
+    .box {
       margin: 20px auto;
-      padding: 15px;
-      border-radius: 10px;
-    }
-    .box-red {
-      background: #1a0000;
-      border: 2px solid red;
-      color: red;
+      padding: 10px;
+      width: 90%;
+      max-width: 600px;
+      background-color: #1a0000;
+      color: #ff4444;
+      border: 1px solid red;
+      border-radius: 8px;
       box-shadow: 0 0 10px red;
     }
-    .box-green {
-      background: #002000;
-      border: 2px solid #00ff00;
-      color: #00ff00;
-      box-shadow: 0 0 10px #00ff00;
-    }
-    .box-blue {
-      background: #000020;
-      border: 2px solid #00ccff;
-      color: #00ccff;
-      box-shadow: 0 0 10px #00ccff;
-    }
-    .box-green a, .box-blue a {
-      color: #00ff00;
+    .box a {
+      color: #00ffff;
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
+
   <h1>AVIATOR AI PREDICTION TOOL</h1>
 
   <div class="input-boxes">
@@ -119,47 +106,37 @@
 
   <button onclick="predict()">Predict Next</button>
 
-  <div class="loader" id="loader" style="display:none">
+  <div class="loader" id="loader" style="display:none;">
     <div class="loader-bar" id="loaderBar"></div>
   </div>
 
   <div id="result"></div>
-
-  <div class="box-red">
-    <strong>IMPORTANT NOTE:</strong><br>
-    THIS TOOL WORKS ONLY FOR 92PKR NEW FRESH ACCOUNTS.<br>DON’T TRY IT ON OTHER GAMES.
-  </div>
-
-  <div class="box-green">
-    👉 <a href="https://www.92pkrc.com/#/register?invitationCode=61457951431" target="_blank">CLICK HERE TO CREATE 92PKR ACCOUNT</a>
-  </div>
-
-  <div class="box-blue">
-    🎥 HOW TO USE:<br>
-    <a href="https://youtube.com/shorts/-NDOQ-XE31w?si=ybTlRqjMl1GA9QIM" target="_blank">Watch Demo on YouTube</a>
-  </div>
 
   <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     Join Our WhatsApp Channel
   </a>
 
+  <div class="box"><strong>IMPORTANT NOTE:</strong> This tool works only on <u>92PKR new fresh accounts</u>. Don’t try with other games.</div>
+  <div class="box"><strong>CLICK HERE TO CREATE 92PKR ACCOUNT:</strong><br><a href="https://www.92pkrc.com/#/register?invitationCode=61457951431" target="_blank">https://www.92pkrc.com/#/register?invitationCode=61457951431</a></div>
+  <div class="box"><strong>HOW TO USE:</strong><br><a href="https://youtube.com/shorts/-NDOQ-XE31w?si=ybTlRqjMl1GA9QIM" target="_blank">Watch YouTube Demo</a></div>
+
   <footer>DEVELOPED BY OLD-HACKER</footer>
 
   <script>
     function autoJump(input, index) {
       const inputs = document.querySelectorAll('.input-boxes input');
-      if (input.value.length >= 3 && index < inputs.length - 1) {
+      if (input.value.length >= 5 && index < inputs.length - 1) {
         inputs[index + 1].focus();
       }
     }
 
     function predict() {
       const inputs = document.querySelectorAll('.input-boxes input');
-      const values = Array.from(inputs).map(i => parseFloat(i.value));
+      const values = Array.from(inputs).map(i => parseFloat(i.value.trim()));
 
       if (values.some(isNaN)) {
-        alert("Please enter all valid numbers like 1.23 or 40.53");
+        alert("Please enter all 4 valid crash results.");
         return;
       }
 
@@ -167,12 +144,12 @@
       const loaderBar = document.getElementById('loaderBar');
       loaderBar.style.width = '0%';
       let width = 0;
+
       const loading = setInterval(() => {
         if (width >= 100) {
           clearInterval(loading);
           document.getElementById('loader').style.display = 'none';
           showPrediction(values);
-          setTimeout(() => resetInputs(), 2000);
         } else {
           width += 2;
           loaderBar.style.width = width + '%';
@@ -182,24 +159,24 @@
 
     function showPrediction(values) {
       const avg = values.reduce((a, b) => a + b, 0) / values.length;
-      const trend = values.map((v, i, arr) => i > 0 ? v - arr[i - 1] : 0).reduce((a, b) => a + b);
-      let next;
+      const trend = values[values.length - 1] - values[0];
+      let predicted;
 
-      if (trend > 1 && avg > 1.9) {
-        next = (avg + 0.2 + Math.random()).toFixed(2);
-      } else if (trend < -1 && avg < 2) {
-        next = (Math.random() + 1.1).toFixed(2);
+      if (trend > 1 && avg > 2.0) {
+        predicted = (avg + Math.random() * 0.5).toFixed(2);
+      } else if (trend < -1 && avg < 2.0) {
+        predicted = (1 + Math.random()).toFixed(2);
       } else {
-        next = (avg + (Math.random() * 0.6 - 0.3)).toFixed(2);
+        predicted = (avg + (Math.random() - 0.5)).toFixed(2);
       }
 
-      document.getElementById('result').innerHTML = `NEXT CRASH: <strong>${next}x</strong>`;
-    }
+      document.getElementById('result').innerHTML = `NEXT CRASH: <strong>${predicted}x</strong>`;
 
-    function resetInputs() {
-      document.querySelectorAll('.input-boxes input').forEach(i => i.value = '');
-      document.getElementById('result').innerHTML = '';
-      document.querySelector('.input-boxes input').focus();
+      setTimeout(() => {
+        document.querySelectorAll('.input-boxes input').forEach(i => i.value = '');
+        document.getElementById('result').innerHTML = '';
+        document.querySelector('.input-boxes input').focus();
+      }, 2000);
     }
   </script>
 </body>
