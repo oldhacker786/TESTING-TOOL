@@ -23,10 +23,10 @@
       gap: 10px;
     }
     .input-boxes input {
-      width: 60px;
+      width: 80px;
       height: 40px;
       text-align: center;
-      font-size: 20px;
+      font-size: 18px;
       background-color: black;
       color: #00ff00;
       border: 2px solid red;
@@ -77,37 +77,29 @@
       width: 20px;
       height: 20px;
     }
-
-    /* Info Boxes */
+    .box-red, .box-green, .box-blue {
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 15px;
+      border-radius: 10px;
+    }
     .box-red {
-      background-color: #1a0000;
+      background: #1a0000;
       border: 2px solid red;
       color: red;
-      padding: 15px;
-      margin: 20px auto;
-      max-width: 500px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px red;
+      box-shadow: 0 0 10px red;
     }
     .box-green {
-      background-color: #002000;
+      background: #002000;
       border: 2px solid #00ff00;
       color: #00ff00;
-      padding: 15px;
-      margin: 20px auto;
-      max-width: 500px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px #00ff00;
+      box-shadow: 0 0 10px #00ff00;
     }
     .box-blue {
-      background-color: #000020;
+      background: #000020;
       border: 2px solid #00ccff;
       color: #00ccff;
-      padding: 15px;
-      margin: 20px auto;
-      max-width: 500px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px #00ccff;
+      box-shadow: 0 0 10px #00ccff;
     }
     .box-green a, .box-blue a {
       color: #00ff00;
@@ -119,11 +111,10 @@
   <h1>AVIATOR AI PREDICTION TOOL</h1>
 
   <div class="input-boxes">
-    <input type="text" maxlength="4" oninput="autoJump(this, 0)" />
-    <input type="text" maxlength="4" oninput="autoJump(this, 1)" />
-    <input type="text" maxlength="4" oninput="autoJump(this, 2)" />
-    <input type="text" maxlength="4" oninput="autoJump(this, 3)" />
-    <input type="text" maxlength="4" oninput="autoJump(this, 4)" />
+    <input type="text" maxlength="5" oninput="autoJump(this, 0)" />
+    <input type="text" maxlength="5" oninput="autoJump(this, 1)" />
+    <input type="text" maxlength="5" oninput="autoJump(this, 2)" />
+    <input type="text" maxlength="5" oninput="autoJump(this, 3)" />
   </div>
 
   <button onclick="predict()">Predict Next</button>
@@ -134,24 +125,20 @@
 
   <div id="result"></div>
 
-  <!-- 🔴 IMPORTANT NOTE BOX -->
   <div class="box-red">
     <strong>IMPORTANT NOTE:</strong><br>
     THIS TOOL WORKS ONLY FOR 92PKR NEW FRESH ACCOUNTS.<br>DON’T TRY IT ON OTHER GAMES.
   </div>
 
-  <!-- 🟩 CREATE ACCOUNT BOX -->
   <div class="box-green">
     👉 <a href="https://www.92pkrc.com/#/register?invitationCode=61457951431" target="_blank">CLICK HERE TO CREATE 92PKR ACCOUNT</a>
   </div>
 
-  <!-- 🔵 HOW TO USE BOX -->
   <div class="box-blue">
     🎥 HOW TO USE:<br>
     <a href="https://youtube.com/shorts/-NDOQ-XE31w?si=ybTlRqjMl1GA9QIM" target="_blank">Watch Demo on YouTube</a>
   </div>
 
-  <!-- WhatsApp -->
   <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     Join Our WhatsApp Channel
@@ -172,7 +159,7 @@
       const values = Array.from(inputs).map(i => parseFloat(i.value));
 
       if (values.some(isNaN)) {
-        alert("Please enter all valid numbers.");
+        alert("Please enter all valid numbers like 1.23 or 40.53");
         return;
       }
 
