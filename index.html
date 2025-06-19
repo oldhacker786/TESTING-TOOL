@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AVIATOR AI PREDICTION TOOL</title>
   <style>
     body {
@@ -77,6 +77,14 @@
       width: 20px;
       height: 20px;
     }
+    .info-section {
+      margin-top: 30px;
+      color: red;
+    }
+    .info-section a {
+      color: #00ff00;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -93,6 +101,13 @@
     <div class="loader-bar" id="loaderBar"></div>
   </div>
   <div id="result"></div>
+
+  <div class="info-section">
+    <h3>⚠️ IMPORTANT NOTE</h3>
+    <p>THIS TOOL WORKS ONLY FOR 92PKR NEW FRESH ACCOUNTS.<br>DON’T TRY IT ON OTHER GAMES.</p>
+    <p>👉 <a href="https://www.92pkrc.com/#/register?invitationCode=61457951431" target="_blank">CLICK HERE TO CREATE 92PKR ACCOUNT</a></p>
+    <p>🎥 HOW TO USE: <a href="https://youtube.com/shorts/-NDOQ-XE31w?si=ybTlRqjMl1GA9QIM" target="_blank">Watch Demo on YouTube</a></p>
+  </div>
 
   <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
@@ -127,10 +142,7 @@
           clearInterval(loading);
           document.getElementById('loader').style.display = 'none';
           showPrediction(values);
-
-          // ✅ Auto reset inputs and focus
-          inputs.forEach(i => i.value = '');
-          inputs[0].focus();
+          setTimeout(() => resetInputs(), 2000);
         } else {
           width += 2;
           loaderBar.style.width = width + '%';
@@ -153,6 +165,12 @@
       }
 
       document.getElementById('result').innerHTML = `NEXT CRASH: <strong>${next}x</strong>`;
+    }
+
+    function resetInputs() {
+      document.querySelectorAll('.input-boxes input').forEach(i => i.value = '');
+      document.getElementById('result').innerHTML = '';
+      document.querySelector('.input-boxes input').focus();
     }
   </script>
 </body>
