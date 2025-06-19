@@ -1,89 +1,102 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OLD-HACKER Tools - Username & IP Scanner</title>
+  <title>IP Info Tool - OLD-HACKER</title>
   <style>
     body {
-      background-color: black;
+      background-color: #000;
       color: #00ff00;
       font-family: 'Courier New', Courier, monospace;
       text-align: center;
       padding: 20px;
     }
     h1 {
-      text-shadow: 0 0 10px #00ff00;
+      color: #ff0000;
+      text-shadow: 0 0 5px #ff0000;
     }
     input, button {
-      background: black;
-      border: 1px solid #00ff00;
-      color: #00ff00;
       padding: 10px;
       margin: 10px;
+      background-color: #111;
+      border: 1px solid #0f0;
+      color: #0f0;
       border-radius: 5px;
-      box-shadow: 0 0 5px #00ff00;
     }
     #result {
       margin-top: 20px;
-      border: 1px solid #00ff00;
+      border: 1px solid #0f0;
       padding: 15px;
-      background-color: #001100;
-      border-radius: 5px;
-      box-shadow: 0 0 15px #00ff00;
-      text-align: left;
-      white-space: pre-wrap;
+      border-radius: 10px;
+      background-color: #111;
+      box-shadow: 0 0 10px #0f0;
+    }
+    iframe {
+      margin-top: 15px;
+      border: 2px solid #0f0;
+      border-radius: 8px;
     }
     footer {
-      margin-top: 30px;
-      font-size: 14px;
-      color: #888;
+      margin-top: 40px;
+      color: #ff0000;
+    }
+    .whatsapp-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #0f0;
+      margin-top: 20px;
+      gap: 10px;
+    }
+    .whatsapp-link img {
+      width: 20px;
+      height: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>OLD-HACKER TOOLKIT</h1>  <h2>🔍 Username Footprinting</h2>
-  <input type="text" id="username" placeholder="Enter username...">
-  <button onclick="searchUsername()">Search</button>  <h2>🌍 IP Location & Device Scanner</h2>
-  <input type="text" id="ip" placeholder="Enter IP address...">
-  <button onclick="lookupIP()">Scan</button>  <div id="result"></div>  <footer>
-    DEVELOPED BY OLD-HACKER
-  </footer>  <script>
-    function searchUsername() {
-      const username = document.getElementById('username').value.trim();
-      if (!username) return alert("Enter a username");
-      const sites = [
-        `https://github.com/${username}`,
-        `https://twitter.com/${username}`,
-        `https://instagram.com/${username}`,
-        `https://www.reddit.com/user/${username}`,
-        `https://www.facebook.com/${username}`,
-        `https://www.tiktok.com/@${username}`
-      ];
-      let output = `🔍 Searching for username: ${username}\n\n`;
-      sites.forEach(url => {
-        output += `🔗 ${url}\n`;
-      });
-      document.getElementById('result').textContent = output;
-    }
+  <h1>IP INFO TOOL</h1>
+  <input type="text" id="ip" placeholder="Enter IP Address" />
+  <button onclick="getIPInfo()">SCAN</button>
+  <div id="result"></div>
 
-    async function lookupIP() {
+  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
+    Join Our WhatsApp Channel
+  </a>
+
+  <footer>DEVELOPED BY OLD-HACKER</footer>
+
+  <script>
+    async function getIPInfo() {
       const ip = document.getElementById('ip').value.trim();
-      if (!ip) return alert("Enter an IP address");
-      document.getElementById('result').textContent = '🔄 Scanning IP...';
-      try {
-        const res = await fetch(`https://ipapi.co/${ip}/json/`);
-        const data = await res.json();
-        let info = `🌍 IP Info for: ${ip}\n\n`;
-        info += `🌐 Country: ${data.country_name}\n`;
-        info += `🏙️ Region: ${data.region}\n`;
-        info += `📍 City: ${data.city}\n`;
-        info += `🛰️ ISP: ${data.org}\n`;
-        info += `💻 IP Type: ${data.version}\n`;
-        info += `📡 Latitude: ${data.latitude}, Longitude: ${data.longitude}\n`;
-        document.getElementById('result').textContent = info;
-      } catch (err) {
-        document.getElementById('result').textContent = '❌ Error fetching IP data';
+      if (!ip) return alert('Please enter an IP address.');
+
+      const res = await fetch(`https://ipapi.co/${ip}/json/`);
+      const data = await res.json();
+
+      if (data.error) {
+        document.getElementById('result').innerHTML = `<b>Error:</b> ${data.reason}`;
+        return;
       }
+
+      document.getElementById('result').innerHTML = `
+        <b>IP:</b> ${data.ip}<br>
+        <b>City:</b> ${data.city}<br>
+        <b>Region:</b> ${data.region}<br>
+        <b>Country:</b> ${data.country_name}<br>
+        <b>ISP:</b> ${data.org}<br>
+        <b>Latitude:</b> ${data.latitude}<br>
+        <b>Longitude:</b> ${data.longitude}<br><br>
+        <iframe width="90%" height="300" 
+          src="https://www.openstreetmap.org/export/embed.html?bbox=${data.longitude-0.01}%2C${data.latitude-0.01}%2C${data.longitude+0.01}%2C${data.latitude+0.01}&layer=mapnik&marker=${data.latitude}%2C${data.longitude}" 
+          style="border: 1px solid black"></iframe>
+      `;
     }
-  </script></body>
+  </script>
+</body>
 </html>
