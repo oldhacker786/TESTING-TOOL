@@ -2,123 +2,102 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MULTI-DOWNLOADER by OLD-HACKER</title>
+  <title>URL Bypass Tool - OLD-HACKER</title>
   <style>
     body {
-      background: #000;
-      color: #0f0;
-      font-family: monospace;
+      background-color: black;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      text-align: center;
       padding: 20px;
     }
     h1 {
-      text-align: center;
-      color: #00ff00;
-      text-shadow: 0 0 10px #00ff00;
+      color: red;
+      text-shadow: 0 0 10px red;
     }
-    textarea {
-      width: 100%;
-      height: 200px;
-      background: #111;
-      color: #0f0;
-      border: 1px solid #0f0;
+    input[type="text"] {
+      width: 90%;
+      max-width: 400px;
       padding: 10px;
-      margin-top: 10px;
+      font-size: 16px;
+      background-color: #111;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      border-radius: 5px;
+      margin-bottom: 10px;
     }
     button {
-      background: #000;
-      color: #0f0;
-      border: 1px solid #0f0;
       padding: 10px 20px;
+      font-size: 16px;
+      background-color: black;
+      color: #00ff00;
+      border: 2px solid #00ff00;
       cursor: pointer;
-      margin-top: 10px;
-      margin-right: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px #00ff00;
     }
-    .output {
-      background: #111;
-      border: 1px solid #0f0;
-      padding: 10px;
+    #result {
       margin-top: 20px;
-      white-space: pre-wrap;
-    }
-    footer {
-      margin-top: 30px;
-      text-align: center;
-      color: red;
+      font-size: 18px;
+      word-wrap: break-word;
     }
     .whatsapp-link {
+      margin-top: 30px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-top: 20px;
+      font-size: 18px;
       text-decoration: none;
-      color: #0f0;
-      border: 1px solid #0f0;
+      color: #00ff00;
+      border: 1px solid #00ff00;
       padding: 8px 12px;
-      border-radius: 5px;
-      box-shadow: 0 0 10px #0f0;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00ff00;
     }
     .whatsapp-link img {
       width: 24px;
       height: 24px;
     }
+    footer {
+      margin-top: 30px;
+      color: red;
+    }
   </style>
 </head>
 <body>
-  <h1>MULTI-DOWNLOADER</h1>
-  <p>Paste your links below (Mediafire, Google Drive, etc.)</p>
-  <textarea id="linkInput" placeholder="Paste links here, one per line..."></textarea>
+  <h1>🔗 URL ADS BYPASS TOOL</h1>
+  <input type="text" id="shortUrl" placeholder="Paste your short URL here...">
   <br>
-  <button onclick="processLinks()">Extract Download Links</button>
-  <button onclick="downloadAll()">Download All</button>
-  <button onclick="copyLinks()">Copy All</button>
-  <button onclick="exportLinks()">Export to TXT</button>  <div class="output" id="output"></div>  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+  <button onclick="bypassUrl()">Bypass</button>
+  <div id="result"></div>  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank" class="whatsapp-link">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     Join Our WhatsApp Channel
   </a>  <footer>DEVELOPED BY OLD-HACKER</footer>  <script>
-    function processLinks() {
-      const input = document.getElementById("linkInput").value.trim().split("\n");
-      const outputDiv = document.getElementById("output");
-      let result = "";
-      input.forEach(link => {
-        if (link.includes("mediafire.com")) {
-          const fixed = link.replace("file/", "download/").split("?")[0];
-          result += `✅ Mediafire: ${fixed}\n`;
-        } else if (link.includes("drive.google.com")) {
-          const id = link.match(/[-\w]{25,}/);
-          if (id) {
-            result += `✅ Google Drive: https://drive.google.com/uc?export=download&id=${id[0]}\n`;
-          } else {
-            result += `❌ Invalid Google Drive link\n`;
-          }
-        } else if (link.includes("zippyshare.com")) {
-          result += `⚠️ Zippyshare: Open manually → ${link}\n`;
+    async function bypassUrl() {
+      const url = document.getElementById('shortUrl').value.trim();
+      if (!url) return alert("Please enter a URL");
+
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '⏳ Bypassing...';
+
+      try {
+        const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+        const data = await response.json();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, 'text/html');
+        const metaRefresh = doc.querySelector('meta[http-equiv="refresh"]');
+
+        if (metaRefresh) {
+          const content = metaRefresh.getAttribute('content');
+          const finalUrl = content.split('url=')[1];
+          resultDiv.innerHTML = `✅ Final Link: <a href="${finalUrl}" target="_blank">${finalUrl}</a>`;
         } else {
-          result += `❌ Unsupported or Invalid link → ${link}\n`;
+          resultDiv.innerHTML = '❌ Could not bypass this link. It may be JavaScript protected or expired.';
         }
-      });
-      outputDiv.textContent = result;
-    }
-
-    function downloadAll() {
-      const lines = document.getElementById("output").textContent.trim().split("\n");
-      lines.forEach(l => {
-        const url = l.split(" ").pop();
-        if (url.startsWith("http")) window.open(url, '_blank');
-      });
-    }
-
-    function copyLinks() {
-      const text = document.getElementById("output").textContent;
-      navigator.clipboard.writeText(text).then(() => alert("Copied!"));
-    }
-
-    function exportLinks() {
-      const text = document.getElementById("output").textContent;
-      const blob = new Blob([text], { type: 'text/plain' });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "download_links.txt";
-      a.click();
+      } catch (error) {
+        resultDiv.innerHTML = '❌ Error occurred while bypassing the URL.';
+        console.error(error);
+      }
     }
   </script></body>
 </html>
