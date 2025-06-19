@@ -2,81 +2,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OLD-HACKER TOOL</title>
+  <title>OLD-HACKER Tools - Username & IP Scanner</title>
   <style>
     body {
-      background: black;
+      background-color: black;
       color: #00ff00;
       font-family: 'Courier New', Courier, monospace;
       text-align: center;
       padding: 20px;
     }
+    h1 {
+      text-shadow: 0 0 10px #00ff00;
+    }
     input, button {
+      background: black;
+      border: 1px solid #00ff00;
+      color: #00ff00;
       padding: 10px;
       margin: 10px;
-      border: 2px solid #ff0000;
-      background: #000;
-      color: #00ff00;
       border-radius: 5px;
-      box-shadow: 0 0 10px #ff0000;
+      box-shadow: 0 0 5px #00ff00;
     }
-    #result, #dp {
+    #result {
       margin-top: 20px;
+      border: 1px solid #00ff00;
+      padding: 15px;
+      background-color: #001100;
+      border-radius: 5px;
+      box-shadow: 0 0 15px #00ff00;
+      text-align: left;
+      white-space: pre-wrap;
     }
     footer {
-      margin-top: 50px;
-      color: #ff0000;
-    }
-    .whatsapp-link {
       margin-top: 30px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      color: #00ff00;
-      border: 1px solid #00ff00;
-      padding: 8px 12px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #00ff00;
-    }
-    .whatsapp-link img {
-      width: 24px;
-      height: 24px;
+      font-size: 14px;
+      color: #888;
     }
   </style>
 </head>
 <body>
-  <h1>OLD-HACKER TOOL</h1>  <!-- Facebook DP Viewer -->  <h2>🔍 Facebook Profile Picture Viewer</h2>
-  <input type="text" id="fbUser" placeholder="Enter Facebook Username" />
-  <button onclick="viewFBProfile()">View DP</button>
-  <div id="dp"></div>  <!-- Instagram Username Checker -->  <h2>✅ Instagram Username Checker</h2>
-  <input type="text" id="igUser" placeholder="Enter Instagram Username" />
-  <button onclick="checkIGUsername()">Check Availability</button>
-  <div id="result"></div>  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank" class="whatsapp-link">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
-    Join Our WhatsApp Channel
-  </a>  <footer>DEVELOPED BY OLD-HACKER | © 2025</footer>  <script>
-    function viewFBProfile() {
-      const user = document.getElementById("fbUser").value.trim();
-      if (!user) return alert("Enter Facebook username");
-      const dpUrl = `https://graph.facebook.com/${user}/picture?type=large`;
-      document.getElementById("dp").innerHTML = `<img src="${dpUrl}" width="200" /><br><a href='${dpUrl}' target='_blank'>Open Full Size</a>`;
+  <h1>OLD-HACKER TOOLKIT</h1>  <h2>🔍 Username Footprinting</h2>
+  <input type="text" id="username" placeholder="Enter username...">
+  <button onclick="searchUsername()">Search</button>  <h2>🌍 IP Location & Device Scanner</h2>
+  <input type="text" id="ip" placeholder="Enter IP address...">
+  <button onclick="lookupIP()">Scan</button>  <div id="result"></div>  <footer>
+    DEVELOPED BY OLD-HACKER
+  </footer>  <script>
+    function searchUsername() {
+      const username = document.getElementById('username').value.trim();
+      if (!username) return alert("Enter a username");
+      const sites = [
+        `https://github.com/${username}`,
+        `https://twitter.com/${username}`,
+        `https://instagram.com/${username}`,
+        `https://www.reddit.com/user/${username}`,
+        `https://www.facebook.com/${username}`,
+        `https://www.tiktok.com/@${username}`
+      ];
+      let output = `🔍 Searching for username: ${username}\n\n`;
+      sites.forEach(url => {
+        output += `🔗 ${url}\n`;
+      });
+      document.getElementById('result').textContent = output;
     }
 
-    function checkIGUsername() {
-      const user = document.getElementById("igUser").value.trim();
-      if (!user) return alert("Enter Instagram username");
-      fetch(`https://www.instagram.com/${user}/?__a=1`)
-        .then(res => {
-          if (res.status === 404) {
-            document.getElementById("result").innerHTML = `✅ <b>@${user}</b> is <span style='color:#00ff00'>Available</span>`;
-          } else {
-            document.getElementById("result").innerHTML = `❌ <b>@${user}</b> is <span style='color:red'>Taken</span>`;
-          }
-        })
-        .catch(() => {
-          document.getElementById("result").innerHTML = `⚠️ Could not verify @${user}.`;
-        });
+    async function lookupIP() {
+      const ip = document.getElementById('ip').value.trim();
+      if (!ip) return alert("Enter an IP address");
+      document.getElementById('result').textContent = '🔄 Scanning IP...';
+      try {
+        const res = await fetch(`https://ipapi.co/${ip}/json/`);
+        const data = await res.json();
+        let info = `🌍 IP Info for: ${ip}\n\n`;
+        info += `🌐 Country: ${data.country_name}\n`;
+        info += `🏙️ Region: ${data.region}\n`;
+        info += `📍 City: ${data.city}\n`;
+        info += `🛰️ ISP: ${data.org}\n`;
+        info += `💻 IP Type: ${data.version}\n`;
+        info += `📡 Latitude: ${data.latitude}, Longitude: ${data.longitude}\n`;
+        document.getElementById('result').textContent = info;
+      } catch (err) {
+        document.getElementById('result').textContent = '❌ Error fetching IP data';
+      }
     }
   </script></body>
 </html>
