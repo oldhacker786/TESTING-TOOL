@@ -77,11 +77,39 @@
       width: 20px;
       height: 20px;
     }
-    .info-section {
-      margin-top: 30px;
+
+    /* Info Boxes */
+    .box-red {
+      background-color: #1a0000;
+      border: 2px solid red;
       color: red;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px red;
     }
-    .info-section a {
+    .box-green {
+      background-color: #002000;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ff00;
+    }
+    .box-blue {
+      background-color: #000020;
+      border: 2px solid #00ccff;
+      color: #00ccff;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ccff;
+    }
+    .box-green a, .box-blue a {
       color: #00ff00;
       text-decoration: underline;
     }
@@ -89,6 +117,7 @@
 </head>
 <body>
   <h1>AVIATOR AI PREDICTION TOOL</h1>
+
   <div class="input-boxes">
     <input type="text" maxlength="4" oninput="autoJump(this, 0)" />
     <input type="text" maxlength="4" oninput="autoJump(this, 1)" />
@@ -96,19 +125,33 @@
     <input type="text" maxlength="4" oninput="autoJump(this, 3)" />
     <input type="text" maxlength="4" oninput="autoJump(this, 4)" />
   </div>
+
   <button onclick="predict()">Predict Next</button>
+
   <div class="loader" id="loader" style="display:none">
     <div class="loader-bar" id="loaderBar"></div>
   </div>
+
   <div id="result"></div>
 
-  <div class="info-section">
-    <h3>⚠️ IMPORTANT NOTE</h3>
-    <p>THIS TOOL WORKS ONLY FOR 92PKR NEW FRESH ACCOUNTS.<br>DON’T TRY IT ON OTHER GAMES.</p>
-    <p>👉 <a href="https://www.92pkrc.com/#/register?invitationCode=61457951431" target="_blank">CLICK HERE TO CREATE 92PKR ACCOUNT</a></p>
-    <p>🎥 HOW TO USE: <a href="https://youtube.com/shorts/-NDOQ-XE31w?si=ybTlRqjMl1GA9QIM" target="_blank">Watch Demo on YouTube</a></p>
+  <!-- 🔴 IMPORTANT NOTE BOX -->
+  <div class="box-red">
+    <strong>IMPORTANT NOTE:</strong><br>
+    THIS TOOL WORKS ONLY FOR 92PKR NEW FRESH ACCOUNTS.<br>DON’T TRY IT ON OTHER GAMES.
   </div>
 
+  <!-- 🟩 CREATE ACCOUNT BOX -->
+  <div class="box-green">
+    👉 <a href="https://www.92pkrc.com/#/register?invitationCode=61457951431" target="_blank">CLICK HERE TO CREATE 92PKR ACCOUNT</a>
+  </div>
+
+  <!-- 🔵 HOW TO USE BOX -->
+  <div class="box-blue">
+    🎥 HOW TO USE:<br>
+    <a href="https://youtube.com/shorts/-NDOQ-XE31w?si=ybTlRqjMl1GA9QIM" target="_blank">Watch Demo on YouTube</a>
+  </div>
+
+  <!-- WhatsApp -->
   <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     Join Our WhatsApp Channel
@@ -151,11 +194,10 @@
     }
 
     function showPrediction(values) {
-      const last = values[values.length - 1];
       const avg = values.reduce((a, b) => a + b, 0) / values.length;
       const trend = values.map((v, i, arr) => i > 0 ? v - arr[i - 1] : 0).reduce((a, b) => a + b);
-
       let next;
+
       if (trend > 1 && avg > 1.9) {
         next = (avg + 0.2 + Math.random()).toFixed(2);
       } else if (trend < -1 && avg < 2) {
