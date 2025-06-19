@@ -1,8 +1,9 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AVIATOR AI PREDICTOR</title>
+  <title>AVIATOR AI PREDICTION TOOL</title>
   <style>
     body {
       background-color: black;
@@ -76,15 +77,6 @@
       width: 20px;
       height: 20px;
     }
-    .note-box {
-      margin-top: 40px;
-      color: red;
-      font-size: 14px;
-    }
-    .note-box a {
-      color: #00ff00;
-      text-decoration: underline;
-    }
   </style>
 </head>
 <body>
@@ -101,16 +93,11 @@
     <div class="loader-bar" id="loaderBar"></div>
   </div>
   <div id="result"></div>
+
   <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     Join Our WhatsApp Channel
   </a>
-
-  <div class="note-box">
-    <p><strong>IMPORTANT NOTE:</strong> THIS TOOL WORKS ONLY FOR <u>92PKR NEW FRESH ACCOUNT</u>. DON'T TRY WITH OTHER GAMES.</p>
-    <p><a href="https://www.92pkrc.com/#/register?invitationCode=61457951431" target="_blank">CLICK HERE TO CREATE 92PKR ACCOUNT</a></p>
-    <p><a href="https://youtube.com/shorts/-NDOQ-XE31w?si=ybTlRqjMl1GA9QIM" target="_blank">HOW TO USE (Watch Video)</a></p>
-  </div>
 
   <footer>DEVELOPED BY OLD-HACKER</footer>
 
@@ -140,6 +127,10 @@
           clearInterval(loading);
           document.getElementById('loader').style.display = 'none';
           showPrediction(values);
+
+          // ✅ Auto reset inputs and focus
+          inputs.forEach(i => i.value = '');
+          inputs[0].focus();
         } else {
           width += 2;
           loaderBar.style.width = width + '%';
