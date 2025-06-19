@@ -1,140 +1,149 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AVIATOR AI PREDICTOR</title>
   <style>
     body {
-      background-color: #000;
-      color: #0f0;
-      font-family: 'Courier New', monospace;
+      background-color: black;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
       text-align: center;
       padding: 20px;
     }
     h1 {
-      font-size: 28px;
-      text-shadow: 0 0 10px #0f0;
+      text-shadow: 0 0 10px red;
+      color: red;
     }
-    input {
+    .input-boxes {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .input-boxes input {
       width: 60px;
-      padding: 10px;
-      margin: 5px;
-      background-color: #000;
-      color: #0f0;
-      border: 1px solid #0f0;
-      font-size: 18px;
+      height: 40px;
       text-align: center;
-      border-radius: 5px;
+      font-size: 20px;
+      background-color: black;
+      color: #00ff00;
+      border: 2px solid red;
+      border-radius: 6px;
     }
     button {
-      margin-top: 20px;
       padding: 10px 20px;
-      background-color: #000;
-      color: #0f0;
-      border: 2px solid #0f0;
+      font-size: 18px;
+      margin-top: 20px;
+      background-color: black;
+      color: #00ff00;
+      border: 2px solid red;
       cursor: pointer;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #0f0;
     }
-    .result {
+    #result {
       margin-top: 30px;
       font-size: 24px;
     }
-    .animation {
-      margin-top: 20px;
-      height: 50px;
-      overflow: hidden;
+    .loader {
+      width: 80%;
+      height: 10px;
+      background: #222;
+      margin: 10px auto;
+      border: 1px solid red;
     }
-    .plane {
-      display: inline-block;
-      animation: fly 2.5s linear forwards;
+    .loader-bar {
+      height: 100%;
+      background: #00ff00;
+      width: 0%;
     }
-    @keyframes fly {
-      from { transform: translateX(-100%); }
-      to { transform: translateX(100vw); }
+    footer {
+      margin-top: 30px;
+      color: red;
     }
     .whatsapp-link {
-      margin-top: 30px;
+      margin-top: 20px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-size: 18px;
       text-decoration: none;
-      color: #0f0;
-      border: 1px solid #0f0;
-      padding: 8px 12px;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 6px 12px;
       border-radius: 8px;
-      box-shadow: 0 0 10px #0f0;
+      box-shadow: 0 0 10px #00ff00;
     }
     .whatsapp-link img {
-      width: 24px;
-      height: 24px;
-    }
-    footer {
-      margin-top: 40px;
-      font-size: 12px;
-      color: #0f0;
+      width: 20px;
+      height: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>AVIATOR AI PREDICTOR</h1>
-  <p>Enter Last 5 Crash Values</p>
-  <div>
-    <input type="number" id="c1" />
-    <input type="number" id="c2" />
-    <input type="number" id="c3" />
-    <input type="number" id="c4" />
-    <input type="number" id="c5" />
+  <h1>AVIATOR AI PREDICTION TOOL</h1>
+  <div class="input-boxes">
+    <input type="text" maxlength="4" oninput="autoJump(this, 0)" />
+    <input type="text" maxlength="4" oninput="autoJump(this, 1)" />
+    <input type="text" maxlength="4" oninput="autoJump(this, 2)" />
+    <input type="text" maxlength="4" oninput="autoJump(this, 3)" />
+    <input type="text" maxlength="4" oninput="autoJump(this, 4)" />
   </div>
-  <button onclick="predict()">Predict</button>  <div class="animation">
-    <div class="plane" id="plane">✈️💥</div>
-  </div>  <div class="result" id="result"></div>  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank" class="whatsapp-link">
+  <button onclick="predict()">Predict Next</button>
+  <div class="loader" id="loader" style="display:none">
+    <div class="loader-bar" id="loaderBar"></div>
+  </div>
+  <div id="result"></div>
+  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     Join Our WhatsApp Channel
-  </a>  <footer>DEVELOPED BY OLD-HACKER</footer><audio id="beep" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+  </a>
+  <footer>DEVELOPED BY OLD-HACKER</footer>  <script>
+    function autoJump(input, index) {
+      const inputs = document.querySelectorAll('.input-boxes input');
+      if (input.value.length >= 3 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    }
 
-  <script>
     function predict() {
-      const beep = document.getElementById("beep");
-      beep.play();
-      document.getElementById("plane").style.animation = "none";
-      void document.getElementById("plane").offsetWidth; // reset animation
-      document.getElementById("plane").style.animation = null;
+      const inputs = document.querySelectorAll('.input-boxes input');
+      const values = Array.from(inputs).map(i => parseFloat(i.value));
 
-      const values = [
-        parseFloat(document.getElementById("c1").value),
-        parseFloat(document.getElementById("c2").value),
-        parseFloat(document.getElementById("c3").value),
-        parseFloat(document.getElementById("c4").value),
-        parseFloat(document.getElementById("c5").value)
-      ];
-
-      const valid = values.every(v => !isNaN(v) && v > 0);
-      if (!valid) {
-        document.getElementById("result").innerHTML = "❌ Invalid input";
+      if (values.some(isNaN)) {
+        alert("Please enter all valid numbers.");
         return;
       }
 
-      const avg = values.reduce((a,b) => a+b) / values.length;
-      let prediction = '';
-      let confidence = 0;
+      document.getElementById('loader').style.display = 'block';
+      const loaderBar = document.getElementById('loaderBar');
+      loaderBar.style.width = '0%';
+      let width = 0;
+      const loading = setInterval(() => {
+        if (width >= 100) {
+          clearInterval(loading);
+          document.getElementById('loader').style.display = 'none';
+          showPrediction(values);
+        } else {
+          width += 2;
+          loaderBar.style.width = width + '%';
+        }
+      }, 20);
+    }
 
-      if (avg > 5) {
-        prediction = '>5x';
-        confidence = Math.floor(80 + Math.random() * 10);
-      } else if (avg > 2) {
-        prediction = '2x – 5x';
-        confidence = Math.floor(70 + Math.random() * 15);
+    function showPrediction(values) {
+      const last = values[values.length - 1];
+      const avg = values.reduce((a, b) => a + b, 0) / values.length;
+      const trend = values.map((v, i, arr) => i > 0 ? v - arr[i - 1] : 0).reduce((a, b) => a + b);
+
+      let next;
+      if (trend > 1 && avg > 1.9) {
+        next = (avg + 0.2 + Math.random()).toFixed(2);
+      } else if (trend < -1 && avg < 2) {
+        next = (Math.random() + 1.1).toFixed(2);
       } else {
-        prediction = '<2x';
-        confidence = Math.floor(65 + Math.random() * 15);
+        next = (avg + (Math.random() * 0.6 - 0.3)).toFixed(2);
       }
 
-      document.getElementById("result").innerHTML = `🚀 Prediction: <strong>${prediction}</strong><br>🎯 Confidence: ${confidence}%`;
-
-      // Auto clear inputs
-      ["c1","c2","c3","c4","c5"].forEach(id => document.getElementById(id).value = "");
+      document.getElementById('result').innerHTML = `NEXT CRASH: <strong>${next}x</strong>`;
     }
   </script></body>
 </html>
