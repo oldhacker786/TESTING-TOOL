@@ -1,75 +1,124 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html lang="en">
 <head>
-  <title>Image Link Generator - OLD-HACKER</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MULTI-DOWNLOADER by OLD-HACKER</title>
   <style>
     body {
-      background-color: #000;
-      color: #00ff00;
+      background: #000;
+      color: #0f0;
       font-family: monospace;
-      text-align: center;
-      padding: 30px;
+      padding: 20px;
     }
     h1 {
-      color: #ff0000;
-      text-shadow: 0 0 5px #ff0000;
+      text-align: center;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
     }
-    input, button {
-      margin: 15px;
-      padding: 10px;
-      background-color: #111;
+    textarea {
+      width: 100%;
+      height: 200px;
+      background: #111;
       color: #0f0;
       border: 1px solid #0f0;
-      border-radius: 5px;
+      padding: 10px;
+      margin-top: 10px;
     }
-    #linkBox {
+    button {
+      background: #000;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-right: 10px;
+    }
+    .output {
+      background: #111;
+      border: 1px solid #0f0;
+      padding: 10px;
       margin-top: 20px;
-      color: #00ff00;
-      font-size: 16px;
-      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      color: red;
+    }
+    .whatsapp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 8px 12px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px #0f0;
+    }
+    .whatsapp-link img {
+      width: 24px;
+      height: 24px;
     }
   </style>
 </head>
 <body>
-  <h1>Instant Image Link Generator</h1>
-  <input type="file" id="imageInput" accept="image/*" />
-  <br />
-  <button onclick="uploadImage()">Upload & Get Link</button>
-  <div id="linkBox"></div>
-
-  <script>
-    async function uploadImage() {
-      const file = document.getElementById('imageInput').files[0];
-      if (!file) {
-        alert("Please select an image!");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("file", file);
-
-      document.getElementById('linkBox').innerHTML = "Uploading... 🔄";
-
-      try {
-        const response = await fetch("https://0x0.st", {
-          method: "POST",
-          body: formData
-        });
-
-        const link = await response.text();
-        document.getElementById('linkBox').innerHTML = `
-          ✅ Link: <br><a href="${link}" target="_blank">${link}</a><br>
-          <button onclick="copyLink('${link}')">📋 Copy</button>
-        `;
-      } catch (e) {
-        document.getElementById('linkBox').innerText = "❌ Upload failed!";
-      }
+  <h1>MULTI-DOWNLOADER</h1>
+  <p>Paste your links below (Mediafire, Google Drive, etc.)</p>
+  <textarea id="linkInput" placeholder="Paste links here, one per line..."></textarea>
+  <br>
+  <button onclick="processLinks()">Extract Download Links</button>
+  <button onclick="downloadAll()">Download All</button>
+  <button onclick="copyLinks()">Copy All</button>
+  <button onclick="exportLinks()">Export to TXT</button>  <div class="output" id="output"></div>  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+    Join Our WhatsApp Channel
+  </a>  <footer>DEVELOPED BY OLD-HACKER</footer>  <script>
+    function processLinks() {
+      const input = document.getElementById("linkInput").value.trim().split("\n");
+      const outputDiv = document.getElementById("output");
+      let result = "";
+      input.forEach(link => {
+        if (link.includes("mediafire.com")) {
+          const fixed = link.replace("file/", "download/").split("?")[0];
+          result += `✅ Mediafire: ${fixed}\n`;
+        } else if (link.includes("drive.google.com")) {
+          const id = link.match(/[-\w]{25,}/);
+          if (id) {
+            result += `✅ Google Drive: https://drive.google.com/uc?export=download&id=${id[0]}\n`;
+          } else {
+            result += `❌ Invalid Google Drive link\n`;
+          }
+        } else if (link.includes("zippyshare.com")) {
+          result += `⚠️ Zippyshare: Open manually → ${link}\n`;
+        } else {
+          result += `❌ Unsupported or Invalid link → ${link}\n`;
+        }
+      });
+      outputDiv.textContent = result;
     }
 
-    function copyLink(text) {
-      navigator.clipboard.writeText(text);
-      alert("✅ Link copied to clipboard!");
+    function downloadAll() {
+      const lines = document.getElementById("output").textContent.trim().split("\n");
+      lines.forEach(l => {
+        const url = l.split(" ").pop();
+        if (url.startsWith("http")) window.open(url, '_blank');
+      });
     }
-  </script>
-</body>
+
+    function copyLinks() {
+      const text = document.getElementById("output").textContent;
+      navigator.clipboard.writeText(text).then(() => alert("Copied!"));
+    }
+
+    function exportLinks() {
+      const text = document.getElementById("output").textContent;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "download_links.txt";
+      a.click();
+    }
+  </script></body>
 </html>
