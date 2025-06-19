@@ -1,1 +1,169 @@
-3
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AVIATOR AI PREDICTION TOOL</title>
+  <style>
+    body {
+      background-color: black;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+    }
+    .input-boxes {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .input-boxes input {
+      width: 60px;
+      height: 50px;
+      text-align: center;
+      font-size: 20px;
+      background: black;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      border-radius: 5px;
+      box-shadow: 0 0 5px #00ff00;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: black;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ff00;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 24px;
+      color: #00ff00;
+    }
+    .loader {
+      margin: 20px auto;
+      width: 80%;
+      height: 10px;
+      background: #222;
+      border: 1px solid #0f0;
+    }
+    .loader-bar {
+      height: 100%;
+      width: 0%;
+      background: #0f0;
+      transition: width 1s ease-in-out;
+    }
+    .important-note {
+      margin-top: 40px;
+      padding: 15px;
+      background-color: #220000;
+      color: #ff0000;
+      border: 2px solid red;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 0 10px red;
+    }
+    .important-note a {
+      display: inline-block;
+      margin-top: 10px;
+      color: white;
+      background-color: red;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 0 10px red;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #00ff00;
+    }
+  </style>
+</head>
+<body>
+  <h1>AVIATOR AI PREDICTION TOOL</h1>
+  <div class="input-boxes" id="input-boxes">
+    <!-- 5 input fields -->
+    <input type="number" oninput="nextInput(0)" max="999" />
+    <input type="number" oninput="nextInput(1)" max="999" />
+    <input type="number" oninput="nextInput(2)" max="999" />
+    <input type="number" oninput="nextInput(3)" max="999" />
+    <input type="number" oninput="nextInput(4)" max="999" />
+  </div>
+  <button onclick="predict()">PREDICT</button>
+  <div class="loader" id="loader" style="display: none;">
+    <div class="loader-bar" id="loader-bar"></div>
+  </div>
+  <div id="result"></div>
+
+  <div class="important-note">
+    IMPORTANT NOTE<br>
+    THIS TOOL WORK ONLY 92PKR NEW FRESH ACCOUNT<br>
+    DON'T TRY ANOTHER GAMES<br>
+    <a href="https://www.92pkrc.com/#/register?invitationCode=61457951431" target="_blank">CLICK HERE TO CREATE 92PKR ACCOUNT</a>
+  </div>
+
+  <footer>
+    DEVELOPED BY OLD-HACKER | © 2025
+  </footer>
+
+  <script>
+    function nextInput(index) {
+      const boxes = document.querySelectorAll("#input-boxes input");
+      if (boxes[index].value.length >= 1 && boxes[index + 1]) {
+        boxes[index + 1].focus();
+      }
+    }
+
+    function predict() {
+      const boxes = document.querySelectorAll("#input-boxes input");
+      const numbers = Array.from(boxes).map(b => parseFloat(b.value) || 0);
+      if (numbers.length < 5) return alert("Enter all 5 crash values");
+
+      document.getElementById("loader").style.display = "block";
+      document.getElementById("loader-bar").style.width = "0%";
+      document.getElementById("result").innerHTML = "";
+
+      let percent = 0;
+      const interval = setInterval(() => {
+        percent += 10;
+        document.getElementById("loader-bar").style.width = percent + "%";
+        if (percent >= 100) {
+          clearInterval(interval);
+          showResult(numbers);
+        }
+      }, 100);
+    }
+
+    function showResult(numbers) {
+      document.getElementById("loader").style.display = "none";
+      const avg = numbers.reduce((a, b) => a + b, 0) / numbers.length;
+      const trend = numbers[numbers.length - 1] > numbers[0] ? "UP" : "DOWN";
+
+      let prediction = 0;
+      if (avg > 5 && trend === "UP") {
+        prediction = (avg + Math.random()).toFixed(2);
+      } else if (avg < 3 && trend === "DOWN") {
+        prediction = (avg + Math.random()).toFixed(2);
+      } else {
+        prediction = (Math.random() * 3 + 1).toFixed(2);
+      }
+
+      document.getElementById("result").innerHTML = `🎯 NEXT CRASH: <b>${prediction}x</b>`;
+      document.querySelectorAll("#input-boxes input").forEach(i => i.value = '');
+      document.querySelector("#input-boxes input").focus();
+    }
+  </script>
+</body>
+</html>
