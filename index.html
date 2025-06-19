@@ -1,102 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>IP Info Tool - OLD-HACKER</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CCTV CAM FINDER - OLD-HACKER</title>
   <style>
     body {
-      background-color: #000;
+      background-color: black;
       color: #00ff00;
-      font-family: 'Courier New', Courier, monospace;
+      font-family: monospace;
       text-align: center;
       padding: 20px;
     }
-    h1 {
-      color: #ff0000;
-      text-shadow: 0 0 5px #ff0000;
-    }
-    input, button {
+    input, select, button {
+      background: black;
+      color: #00ff00;
+      border: 1px solid #00ff00;
       padding: 10px;
-      margin: 10px;
-      background-color: #111;
-      border: 1px solid #0f0;
-      color: #0f0;
+      margin: 5px;
       border-radius: 5px;
     }
-    #result {
-      margin-top: 20px;
-      border: 1px solid #0f0;
-      padding: 15px;
-      border-radius: 10px;
+    .result-box {
+      border: 1px solid #00ff00;
+      margin: 10px auto;
+      padding: 10px;
+      width: 90%;
       background-color: #111;
-      box-shadow: 0 0 10px #0f0;
-    }
-    iframe {
-      margin-top: 15px;
-      border: 2px solid #0f0;
-      border-radius: 8px;
-    }
-    footer {
-      margin-top: 40px;
-      color: #ff0000;
+      box-shadow: 0 0 10px #00ff00;
+      text-align: left;
     }
     .whatsapp-link {
+      margin-top: 20px;
       display: inline-flex;
       align-items: center;
-      text-decoration: none;
-      color: #0f0;
-      border: 1px solid #0f0;
-      padding: 8px 12px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #0f0;
-      margin-top: 20px;
       gap: 10px;
+      color: #00ff00;
+      text-decoration: none;
+      border: 1px solid #00ff00;
+      padding: 10px;
+      border-radius: 5px;
     }
     .whatsapp-link img {
       width: 20px;
       height: 20px;
     }
+    footer {
+      margin-top: 30px;
+      color: #ff0000;
+    }
   </style>
 </head>
 <body>
-  <h1>IP INFO TOOL</h1>
-  <input type="text" id="ip" placeholder="Enter IP Address" />
-  <button onclick="getIPInfo()">SCAN</button>
-  <div id="result"></div>
-
-  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
+  <h2>CCTV CAM FINDER TOOL</h2>  <input type="text" id="keyword" placeholder="e.g. webcamxp" />
+  <input type="text" id="country" placeholder="Country (optional)" />
+  <input type="text" id="port" placeholder="Port (optional)" />
+  <select id="engine">
+    <option value="shodan">Shodan</option>
+    <option value="zoomeye">ZoomEye</option>
+    <option value="censys">Censys</option>
+  </select>
+  <br />
+  <button onclick="findCams()">Search Cameras</button>  <div id="results"></div>  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     Join Our WhatsApp Channel
-  </a>
+  </a>  <footer>DEVELOPED BY OLD-HACKER</footer>  <script>
+    async function findCams() {
+      const keyword = document.getElementById("keyword").value;
+      const country = document.getElementById("country").value;
+      const port = document.getElementById("port").value;
+      const engine = document.getElementById("engine").value;
+      const results = document.getElementById("results");
 
-  <footer>DEVELOPED BY OLD-HACKER</footer>
+      results.innerHTML = "<p>🔍 Searching... Please wait</p>";
 
-  <script>
-    async function getIPInfo() {
-      const ip = document.getElementById('ip').value.trim();
-      if (!ip) return alert('Please enter an IP address.');
-
-      const res = await fetch(`https://ipapi.co/${ip}/json/`);
-      const data = await res.json();
-
-      if (data.error) {
-        document.getElementById('result').innerHTML = `<b>Error:</b> ${data.reason}`;
-        return;
-      }
-
-      document.getElementById('result').innerHTML = `
-        <b>IP:</b> ${data.ip}<br>
-        <b>City:</b> ${data.city}<br>
-        <b>Region:</b> ${data.region}<br>
-        <b>Country:</b> ${data.country_name}<br>
-        <b>ISP:</b> ${data.org}<br>
-        <b>Latitude:</b> ${data.latitude}<br>
-        <b>Longitude:</b> ${data.longitude}<br><br>
-        <iframe width="90%" height="300" 
-          src="https://www.openstreetmap.org/export/embed.html?bbox=${data.longitude-0.01}%2C${data.latitude-0.01}%2C${data.longitude+0.01}%2C${data.latitude+0.01}&layer=mapnik&marker=${data.latitude}%2C${data.longitude}" 
-          style="border: 1px solid black"></iframe>
-      `;
+      // NOTE: Replace with real backend or API endpoint logic
+      setTimeout(() => {
+        results.innerHTML = `
+          <div class='result-box'>
+            <strong>🔗 IP:</strong> 103.XX.XX.17:8080 <br>
+            <strong>🌍 Country:</strong> Pakistan<br>
+            <strong>🛠 Engine:</strong> ${engine.toUpperCase()}<br>
+            <a href="http://103.XX.XX.17:8080" target="_blank">🔴 View Camera</a>
+          </div>
+        `;
+      }, 2000);
     }
-  </script>
-</body>
+  </script></body>
 </html>
