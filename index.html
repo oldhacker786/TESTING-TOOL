@@ -2,87 +2,139 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CCTV CAM FINDER - OLD-HACKER</title>
+  <title>AVIATOR AI PREDICTOR</title>
   <style>
     body {
-      background-color: black;
-      color: #00ff00;
-      font-family: monospace;
+      background-color: #000;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
       text-align: center;
       padding: 20px;
     }
-    input, select, button {
-      background: black;
-      color: #00ff00;
-      border: 1px solid #00ff00;
+    h1 {
+      font-size: 28px;
+      text-shadow: 0 0 10px #0f0;
+    }
+    input {
+      width: 60px;
       padding: 10px;
       margin: 5px;
+      background-color: #000;
+      color: #0f0;
+      border: 1px solid #0f0;
+      font-size: 18px;
+      text-align: center;
       border-radius: 5px;
     }
-    .result-box {
-      border: 1px solid #00ff00;
-      margin: 10px auto;
-      padding: 10px;
-      width: 90%;
-      background-color: #111;
-      box-shadow: 0 0 10px #00ff00;
-      text-align: left;
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #000;
+      color: #0f0;
+      border: 2px solid #0f0;
+      cursor: pointer;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #0f0;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 24px;
+    }
+    .animation {
+      margin-top: 20px;
+      height: 50px;
+      overflow: hidden;
+    }
+    .plane {
+      display: inline-block;
+      animation: fly 2.5s linear forwards;
+    }
+    @keyframes fly {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100vw); }
     }
     .whatsapp-link {
-      margin-top: 20px;
+      margin-top: 30px;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      color: #00ff00;
+      gap: 8px;
+      font-size: 18px;
       text-decoration: none;
-      border: 1px solid #00ff00;
-      padding: 10px;
-      border-radius: 5px;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #0f0;
     }
     .whatsapp-link img {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
     }
     footer {
-      margin-top: 30px;
-      color: #ff0000;
+      margin-top: 40px;
+      font-size: 12px;
+      color: #0f0;
     }
   </style>
 </head>
 <body>
-  <h2>CCTV CAM FINDER TOOL</h2>  <input type="text" id="keyword" placeholder="e.g. webcamxp" />
-  <input type="text" id="country" placeholder="Country (optional)" />
-  <input type="text" id="port" placeholder="Port (optional)" />
-  <select id="engine">
-    <option value="shodan">Shodan</option>
-    <option value="zoomeye">ZoomEye</option>
-    <option value="censys">Censys</option>
-  </select>
-  <br />
-  <button onclick="findCams()">Search Cameras</button>  <div id="results"></div>  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
+  <h1>AVIATOR AI PREDICTOR</h1>
+  <p>Enter Last 5 Crash Values</p>
+  <div>
+    <input type="number" id="c1" />
+    <input type="number" id="c2" />
+    <input type="number" id="c3" />
+    <input type="number" id="c4" />
+    <input type="number" id="c5" />
+  </div>
+  <button onclick="predict()">Predict</button>  <div class="animation">
+    <div class="plane" id="plane">✈️💥</div>
+  </div>  <div class="result" id="result"></div>  <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank" class="whatsapp-link">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     Join Our WhatsApp Channel
-  </a>  <footer>DEVELOPED BY OLD-HACKER</footer>  <script>
-    async function findCams() {
-      const keyword = document.getElementById("keyword").value;
-      const country = document.getElementById("country").value;
-      const port = document.getElementById("port").value;
-      const engine = document.getElementById("engine").value;
-      const results = document.getElementById("results");
+  </a>  <footer>DEVELOPED BY OLD-HACKER</footer><audio id="beep" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
-      results.innerHTML = "<p>🔍 Searching... Please wait</p>";
+  <script>
+    function predict() {
+      const beep = document.getElementById("beep");
+      beep.play();
+      document.getElementById("plane").style.animation = "none";
+      void document.getElementById("plane").offsetWidth; // reset animation
+      document.getElementById("plane").style.animation = null;
 
-      // NOTE: Replace with real backend or API endpoint logic
-      setTimeout(() => {
-        results.innerHTML = `
-          <div class='result-box'>
-            <strong>🔗 IP:</strong> 103.XX.XX.17:8080 <br>
-            <strong>🌍 Country:</strong> Pakistan<br>
-            <strong>🛠 Engine:</strong> ${engine.toUpperCase()}<br>
-            <a href="http://103.XX.XX.17:8080" target="_blank">🔴 View Camera</a>
-          </div>
-        `;
-      }, 2000);
+      const values = [
+        parseFloat(document.getElementById("c1").value),
+        parseFloat(document.getElementById("c2").value),
+        parseFloat(document.getElementById("c3").value),
+        parseFloat(document.getElementById("c4").value),
+        parseFloat(document.getElementById("c5").value)
+      ];
+
+      const valid = values.every(v => !isNaN(v) && v > 0);
+      if (!valid) {
+        document.getElementById("result").innerHTML = "❌ Invalid input";
+        return;
+      }
+
+      const avg = values.reduce((a,b) => a+b) / values.length;
+      let prediction = '';
+      let confidence = 0;
+
+      if (avg > 5) {
+        prediction = '>5x';
+        confidence = Math.floor(80 + Math.random() * 10);
+      } else if (avg > 2) {
+        prediction = '2x – 5x';
+        confidence = Math.floor(70 + Math.random() * 15);
+      } else {
+        prediction = '<2x';
+        confidence = Math.floor(65 + Math.random() * 15);
+      }
+
+      document.getElementById("result").innerHTML = `🚀 Prediction: <strong>${prediction}</strong><br>🎯 Confidence: ${confidence}%`;
+
+      // Auto clear inputs
+      ["c1","c2","c3","c4","c5"].forEach(id => document.getElementById(id).value = "");
     }
   </script></body>
 </html>
