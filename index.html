@@ -1,117 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SIM Database Lookup</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIM Database - OLD HACKER</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      padding: 40px;
+      background-color: #000;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
       text-align: center;
+      padding: 20px;
     }
-    .box {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      max-width: 500px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      width: 80%;
+    h1 {
+      font-size: 2.5em;
       margin-bottom: 10px;
+      text-shadow: 0 0 10px #00ff00;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 70%;
+      font-size: 1em;
+      border: 2px solid #00ff00;
+      background-color: #111;
+      color: #00ff00;
+      outline: none;
     }
     button {
-      width: 84%;
-      background: #28a745;
-      color: white;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #00ff00;
+      color: #000;
       border: none;
       cursor: pointer;
+      margin-left: 10px;
     }
     .result {
-      text-align: left;
-      margin-top: 20px;
-    }
-    .field {
-      margin-bottom: 8px;
-    }
-    .footer {
       margin-top: 30px;
-      font-size: 14px;
-      color: #666;
+      padding: 15px;
+      border: 2px dashed #00ff00;
+      white-space: pre-wrap;
+      text-align: left;
+      background-color: #111;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
-    .footer a {
-      color: #007bff;
-      text-decoration: none;
+    footer {
+      margin-top: 50px;
+      color: #00ff00;
+      font-size: 0.9em;
+    }
+    a {
+      color: #00ff00;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
+  <h1>📱 SIM DATABASE</h1>
+  <p>Search any number to get SIM details</p>
 
-  <div class="box">
-    <h2>📱 SIM Database Lookup</h2>
-    <input type="text" id="searchTerm" placeholder="Enter Number or CNIC">
-    <br>
-    <button onclick="search()">Search</button>
+  <input type="text" id="query" placeholder="Enter number e.g. 03001234567" />
+  <button onclick="searchSim()">Search</button>
 
-    <div id="result" class="result"></div>
+  <div class="result" id="resultBox">Results will appear here...</div>
 
-    <div class="footer">
-      📢 Join our WhatsApp Channel:  
-      <a href="https://whatsapp.com/channel/0029VbAtNf6Likg7MJqCkp2d" target="_blank">
-        Click Here
-      </a><br>
-      👨‍💻 Developed by <b>OLD-HACKER</b>
-    </div>
-  </div>
+  <footer>
+    <p>🔗 Join our WhatsApp Channel: <br />
+      <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank">
+        Click here to join
+      </a>
+    </p>
+    <p>💻 Developed by <strong>OLD-HACKER</strong></p>
+  </footer>
 
   <script>
-    async function search() {
-      const query = document.getElementById('searchTerm').value.trim();
-      const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = "🔍 Searching...";
+    function searchSim() {
+      const query = document.getElementById('query').value;
+      const resultBox = document.getElementById('resultBox');
+      resultBox.innerText = 'Searching...';
 
-      try {
-        const url = `https://pakdatabase.site/api/search.php?username=Kami&password=123456&search_term=${encodeURIComponent(query)}`;
-        const res = await fetch(url, {
-          headers: {
-            "User-Agent": "Mozilla/5.0"
-          }
+      const url = `https://pakdatabase.site/api/search.php?username=Kami&password=123456&search_term=${encodeURIComponent(query)}`;
+
+      fetch(url)
+        .then(response => response.text())
+        .then(data => {
+          resultBox.innerText = data || "No data found or API error.";
+        })
+        .catch(err => {
+          resultBox.innerText = "Error fetching data.";
         });
-
-        const data = await res.json();
-
-        let record = null;
-        for (let key of ["ufone", "jazz", "zong", "telenor"]) {
-          if (data[key] && data[key].length > 0) {
-            record = data[key][0];
-            break;
-          }
-        }
-
-        if (!record) {
-          resultDiv.innerHTML = "❌ No Record Found.";
-          return;
-        }
-
-        // ✅ Show whatever is available
-        resultDiv.innerHTML = `
-          <div class="field">📞 <b>SIM Number:</b> ${record.SUB_NO || 'N/A'}</div>
-          <div class="field">👤 <b>Owner Name:</b> ${record.NAME || 'N/A'}</div>
-          <div class="field">🆔 <b>CNIC:</b> ${record.NIC || 'N/A'}</div>
-          <div class="field">🏠 <b>Address:</b> ${record.ADDRESS || 'N/A'}</div>
-          <div class="field">🏙️ <b>City:</b> ${record.CITY || 'N/A'}</div>
-          <div class="field">📡 <b>Type:</b> ${record.CONN_TYPE || 'N/A'} | Status: ${record.BARRING_STATUS || 'N/A'}</div>
-          <div class="field">📅 <b>Verified On:</b> ${record.BVS_DATE || 'N/A'}</div>
-        `;
-      } catch (e) {
-        resultDiv.innerHTML = "❌ Error fetching data.";
-      }
     }
   </script>
-
 </body>
 </html>
