@@ -97,11 +97,7 @@
           return;
         }
 
-        if (!record.SUB_NO && !record.NAME && !record.NIC) {
-          resultDiv.innerHTML = "⚠️ Record Found but no useful data.";
-          return;
-        }
-
+        // ✅ Show whatever is available
         resultDiv.innerHTML = `
           <div class="field">📞 <b>SIM Number:</b> ${record.SUB_NO || 'N/A'}</div>
           <div class="field">👤 <b>Owner Name:</b> ${record.NAME || 'N/A'}</div>
