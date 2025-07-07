@@ -9,48 +9,68 @@
       background-color: #000;
       color: #00ff00;
       font-family: 'Courier New', Courier, monospace;
+      margin: 0;
+      padding: 0;
       text-align: center;
-      padding: 20px;
     }
+
     h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-      text-shadow: 0 0 10px #00ff00;
+      font-size: 2.8em;
+      margin-top: 30px;
+      text-shadow: 0 0 12px #00ff00;
     }
+
     input[type="text"] {
-      padding: 10px;
-      width: 70%;
-      font-size: 1em;
+      padding: 12px;
+      width: 80%;
+      max-width: 400px;
+      font-size: 1.1em;
       border: 2px solid #00ff00;
       background-color: #111;
       color: #00ff00;
       outline: none;
+      margin-top: 20px;
+      border-radius: 6px;
     }
+
     button {
-      padding: 10px 20px;
+      padding: 12px 25px;
       font-size: 1em;
       background-color: #00ff00;
       color: #000;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
-      margin-left: 10px;
+      margin-top: 10px;
     }
+
     .result {
-      margin-top: 30px;
-      padding: 15px;
-      border: 2px dashed #00ff00;
-      white-space: pre-wrap;
-      text-align: left;
+      margin: 30px auto;
+      padding: 20px;
       background-color: #111;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
+      border: 2px dashed #00ff00;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 700px;
+      text-align: left;
+      font-size: 1em;
     }
-    footer {
-      margin-top: 50px;
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    .label {
+      font-weight: bold;
       color: #00ff00;
-      font-size: 0.9em;
     }
+
+    footer {
+      margin: 40px 0 20px 0;
+      font-size: 0.9em;
+      color: #00ff00;
+    }
+
     a {
       color: #00ff00;
       text-decoration: underline;
@@ -58,38 +78,61 @@
   </style>
 </head>
 <body>
+
   <h1>📱 SIM DATABASE</h1>
   <p>Search any number to get SIM details</p>
 
   <input type="text" id="query" placeholder="Enter number e.g. 03001234567" />
+  <br />
   <button onclick="searchSim()">Search</button>
 
   <div class="result" id="resultBox">Results will appear here...</div>
 
   <footer>
-    <p>🔗 Join our WhatsApp Channel: <br />
-      <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank">
-        Click here to join
-      </a>
-    </p>
+    <p>🔗 Join our WhatsApp Channel: <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank">Click here to join</a></p>
     <p>💻 Developed by <strong>OLD-HACKER</strong></p>
   </footer>
 
   <script>
     function searchSim() {
-      const query = document.getElementById('query').value;
-      const resultBox = document.getElementById('resultBox');
-      resultBox.innerText = 'Searching...';
+      const query = document.getElementById("query").value.trim();
+      const resultBox = document.getElementById("resultBox");
+
+      if (!query) {
+        resultBox.innerText = "❗ Please enter a number.";
+        return;
+      }
+
+      resultBox.innerHTML = "🔍 Searching...";
 
       const url = `https://pakdatabase.site/api/search.php?username=Kami&password=123456&search_term=${encodeURIComponent(query)}`;
 
       fetch(url)
-        .then(response => response.text())
+        .then(res => res.json())
         .then(data => {
-          resultBox.innerText = data || "No data found or API error.";
+          if (!data || Object.keys(data).length === 0) {
+            resultBox.innerText = "❌ No data found.";
+            return;
+          }
+
+          let output = "";
+
+          for (let network in data) {
+            data[network].forEach(entry => {
+              output += `<div class="field"><span class="label">Network:</span> ${network.toUpperCase()}</div>`;
+              output += `<div class="field"><span class="label">Name:</span> ${entry.Name || "N/A"}</div>`;
+              output += `<div class="field"><span class="label">Mobile:</span> ${entry.Mobile}</div>`;
+              output += `<div class="field"><span class="label">CNIC:</span> ${entry.CNIC}</div>`;
+              output += `<div class="field"><span class="label">Status:</span> ${entry.Status}</div>`;
+              output += `<div class="field"><span class="label">Address:</span> ${entry.Address || "N/A"}</div>`;
+              output += "<hr style='border:1px dashed #00ff00; margin:15px 0;' />";
+            });
+          }
+
+          resultBox.innerHTML = output;
         })
-        .catch(err => {
-          resultBox.innerText = "Error fetching data.";
+        .catch(() => {
+          resultBox.innerText = "⚠️ Error fetching data.";
         });
     }
   </script>
