@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SIM Database Lookup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 40px;
+      text-align: center;
+    }
+    .box {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      margin-bottom: 10px;
+    }
+    button {
+      width: 84%;
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .result {
+      text-align: left;
+      margin-top: 20px;
+    }
+    .field {
+      margin-bottom: 8px;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #666;
+    }
+    .footer a {
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>📱 SIM Database Lookup</h2>
+    <input type="text" id="searchTerm" placeholder="Enter Number or CNIC">
+    <br>
+    <button onclick="search()">Search</button>
+
+    <div id="result" class="result"></div>
+
+    <div class="footer">
+      📢 Join our WhatsApp Channel:  
+      <a href="https://whatsapp.com/channel/0029VbAtNf6Likg7MJqCkp2d" target="_blank">
+        Click Here
+      </a><br>
+      👨‍💻 Developed by <b>OLD-HACKER</b>
+    </div>
+  </div>
+
+  <script>
+    async function search() {
+      const query = document.getElementById('searchTerm').value.trim();
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = "🔍 Searching...";
+
+      try {
+        const url = `https://pakdatabase.site/api/search.php?username=Kami&password=123456&search_term=${encodeURIComponent(query)}`;
+        const res = await fetch(url, {
+          headers: {
+            "User-Agent": "Mozilla/5.0"
+          }
+        });
+
+        const data = await res.json();
+
+        let record = null;
+        for (let key of ["ufone", "jazz", "zong", "telenor"]) {
+          if (data[key] && data[key].length > 0) {
+            record = data[key][0];
+            break;
+          }
+        }
+
+        if (!record) {
+          resultDiv.innerHTML = "❌ No Record Found.";
+          return;
+        }
+
+        if (!record.SUB_NO && !record.NAME && !record.NIC) {
+          resultDiv.innerHTML = "⚠️ Record Found but no useful data.";
+          return;
+        }
+
+        resultDiv.innerHTML = `
+          <div class="field">📞 <b>SIM Number:</b> ${record.SUB_NO || 'N/A'}</div>
+          <div class="field">👤 <b>Owner Name:</b> ${record.NAME || 'N/A'}</div>
+          <div class="field">🆔 <b>CNIC:</b> ${record.NIC || 'N/A'}</div>
+          <div class="field">🏠 <b>Address:</b> ${record.ADDRESS || 'N/A'}</div>
+          <div class="field">🏙️ <b>City:</b> ${record.CITY || 'N/A'}</div>
+          <div class="field">📡 <b>Type:</b> ${record.CONN_TYPE || 'N/A'} | Status: ${record.BARRING_STATUS || 'N/A'}</div>
+          <div class="field">📅 <b>Verified On:</b> ${record.BVS_DATE || 'N/A'}</div>
+        `;
+      } catch (e) {
+        resultDiv.innerHTML = "❌ Error fetching data.";
+      }
+    }
+  </script>
+
+</body>
+</html>
