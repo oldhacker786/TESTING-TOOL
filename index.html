@@ -1,140 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIM Database - OLD HACKER</title>
+  <meta charset="UTF-8">
+  <title>Cravo AI Upscale Demo</title>
   <style>
-    body {
-      background-color: #000;
-      color: #00ff00;
-      font-family: 'Courier New', Courier, monospace;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 2.8em;
-      margin-top: 30px;
-      text-shadow: 0 0 12px #00ff00;
-    }
-
-    input[type="text"] {
-      padding: 12px;
-      width: 80%;
-      max-width: 400px;
-      font-size: 1.1em;
-      border: 2px solid #00ff00;
-      background-color: #111;
-      color: #00ff00;
-      outline: none;
-      margin-top: 20px;
-      border-radius: 6px;
-    }
-
-    button {
-      padding: 12px 25px;
-      font-size: 1em;
-      background-color: #00ff00;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .result {
-      margin: 30px auto;
-      padding: 20px;
-      background-color: #111;
-      border: 2px dashed #00ff00;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 700px;
-      text-align: left;
-      font-size: 1em;
-    }
-
-    .field {
-      margin-bottom: 10px;
-    }
-
-    .label {
-      font-weight: bold;
-      color: #00ff00;
-    }
-
-    footer {
-      margin: 40px 0 20px 0;
-      font-size: 0.9em;
-      color: #00ff00;
-    }
-
-    a {
-      color: #00ff00;
-      text-decoration: underline;
-    }
+    body { font-family: sans-serif; padding: 2rem; }
+    img { max-width: 100%; margin-top: 1rem; }
   </style>
 </head>
 <body>
-
-  <h1>📱 SIM DATABASE</h1>
-  <p>Search any number to get SIM details</p>
-
-  <input type="text" id="query" placeholder="Enter number e.g. 03001234567" />
-  <br />
-  <button onclick="searchSim()">Search</button>
-
-  <div class="result" id="resultBox">Results will appear here...</div>
-
-  <footer>
-    <p>🔗 Join our WhatsApp Channel: <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank">Click here to join</a></p>
-    <p>💻 Developed by <strong>OLD-HACKER</strong></p>
-  </footer>
+  <h1>Cravo AI Upscaler</h1>
+  <input type="file" id="fileInput" accept="image/*">
+  <button id="uploadBtn">Upscale</button>
+  <div id="output"></div>
 
   <script>
-    function searchSim() {
-      const query = document.getElementById("query").value.trim();
-      const resultBox = document.getElementById("resultBox");
-
-      if (!query) {
-        resultBox.innerText = "❗ Please enter a number.";
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files.length) {
+        alert('Please choose an image first.');
         return;
       }
 
-      resultBox.innerHTML = "🔍 Searching...";
+      const file = fileInput.files[0];
+      const form = new FormData();
+      form.append('image', file);
+      // append any additional params, e.g.:
+      // form.append('scale', '2x');
+      // form.append('mode', 'precise');
 
-      const url = `https://pakdatabase.site/api/search.php?username=Kami&password=123456&search_term=${encodeURIComponent(query)}`;
-
-      fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          if (!data || Object.keys(data).length === 0) {
-            resultBox.innerText = "❌ No data found.";
-            return;
-          }
-
-          let output = "";
-
-          for (let network in data) {
-            data[network].forEach(entry => {
-              output += `<div class="field"><span class="label">Network:</span> ${network.toUpperCase()}</div>`;
-              output += `<div class="field"><span class="label">Name:</span> ${entry.Name || "N/A"}</div>`;
-              output += `<div class="field"><span class="label">Mobile:</span> ${entry.Mobile}</div>`;
-              output += `<div class="field"><span class="label">CNIC:</span> ${entry.CNIC}</div>`;
-              output += `<div class="field"><span class="label">Status:</span> ${entry.Status}</div>`;
-              output += `<div class="field"><span class="label">Address:</span> ${entry.Address || "N/A"}</div>`;
-              output += "<hr style='border:1px dashed #00ff00; margin:15px 0;' />";
-            });
-          }
-
-          resultBox.innerHTML = output;
-        })
-        .catch(() => {
-          resultBox.innerText = "⚠️ Error fetching data.";
+      try {
+        const resp = await fetch('https://docs.cravo.live/api/v1/ai-upscale', {
+          method: 'POST',
+          headers: {
+            // 'Authorization': 'Bearer YOUR_API_KEY', // uncomment if required
+          },
+          body: form
         });
-    }
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => resp.statusText);
+          throw new Error(err.error || err);
+        }
+
+        const data = await resp.json();
+        // assuming the endpoint responds with { url: '...' }
+        const img = document.createElement('img');
+        img.src = data.url;
+        img.alt = 'Upscaled result';
+        const output = document.getElementById('output');
+        output.innerHTML = '';
+        output.appendChild(img);
+
+      } catch (e) {
+        console.error(e);
+        alert('Upscale failed: ' + e.message);
+      }
+    });
   </script>
 </body>
 </html>
