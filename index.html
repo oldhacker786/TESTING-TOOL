@@ -2,61 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cravo AI Upscale Demo</title>
-  <style>
-    body { font-family: sans-serif; padding: 2rem; }
-    img { max-width: 100%; margin-top: 1rem; }
-  </style>
+  <title>Download APK by Name</title>
 </head>
 <body>
-  <h1>Cravo AI Upscaler</h1>
-  <input type="file" id="fileInput" accept="image/*">
-  <button id="uploadBtn">Upscale</button>
-  <div id="output"></div>
+  <h2>APK Downloader</h2>
+  <input type="text" id="apkName" placeholder="Enter APK name">
+  <button onclick="downloadAPK()">Download APK</button>
 
   <script>
-    document.getElementById('uploadBtn').addEventListener('click', async () => {
-      const fileInput = document.getElementById('fileInput');
-      if (!fileInput.files.length) {
-        alert('Please choose an image first.');
+    function downloadAPK() {
+      const apkName = document.getElementById("apkName").value.trim();
+      if (!apkName) {
+        alert("Please enter a valid APK name.");
         return;
       }
 
-      const file = fileInput.files[0];
-      const form = new FormData();
-      form.append('image', file);
-      // append any additional params, e.g.:
-      // form.append('scale', '2x');
-      // form.append('mode', 'precise');
-
-      try {
-        const resp = await fetch('https://docs.cravo.live/api/v1/ai-upscale', {
-          method: 'POST',
-          headers: {
-            // 'Authorization': 'Bearer YOUR_API_KEY', // uncomment if required
-          },
-          body: form
-        });
-
-        if (!resp.ok) {
-          const err = await resp.json().catch(() => resp.statusText);
-          throw new Error(err.error || err);
-        }
-
-        const data = await resp.json();
-        // assuming the endpoint responds with { url: '...' }
-        const img = document.createElement('img');
-        img.src = data.url;
-        img.alt = 'Upscaled result';
-        const output = document.getElementById('output');
-        output.innerHTML = '';
-        output.appendChild(img);
-
-      } catch (e) {
-        console.error(e);
-        alert('Upscale failed: ' + e.message);
-      }
-    });
+      const encodedQuery = encodeURIComponent(apkName);
+      const url = `https://apis.davidcyriltech.my.id/download/apk?text=${encodedQuery}`;
+      
+      // Redirect to the download URL
+      window.location.href = url;
+    }
   </script>
 </body>
 </html>
