@@ -1,28 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Download APK by Name</title>
+  <title>Wingo AI Predictor - 92Glory</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #e9f0ff;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #0044cc;
+    }
+    .note {
+      background: #ffcccb;
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    input {
+      width: 50px;
+      font-size: 18px;
+      text-align: center;
+      margin: 5px;
+      border: 2px solid #444;
+      border-radius: 6px;
+    }
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin: 10px 5px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .link-btn {
+      background: #007bff;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 22px;
+      font-weight: bold;
+      color: darkgreen;
+    }
+  </style>
 </head>
 <body>
-  <h2>APK Downloader</h2>
-  <input type="text" id="apkName" placeholder="Enter APK name">
-  <button onclick="downloadAPK()">Download APK</button>
+
+  <div class="note">
+    🚨 IMPORTANT NOTE: This prediction tool works only for <b>92GLORY</b><br>
+    👇👇👇
+  </div>
+
+  <button class="link-btn" onclick="window.open('https://www.92glory44.com/#/register?invitationCode=43816145180', '_blank')">
+    CLICK HERE TO CREATE NEW ACCOUNT
+  </button>
+
+  <button class="link-btn" onclick="window.open('https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09', '_blank')">
+    JOIN WHATSAPP CHANNEL
+  </button>
+
+  <hr>
+
+  <h1>🎯 Wingo AI Prediction Tool</h1>
+  <p>Enter Last 4 Results (0–9):</p>
+
+  <input type="number" id="r1" min="0" max="9">
+  <input type="number" id="r2" min="0" max="9">
+  <input type="number" id="r3" min="0" max="9">
+  <input type="number" id="r4" min="0" max="9">
+  <br><br>
+  <button onclick="predict()">Predict</button>
+
+  <div id="result"></div>
 
   <script>
-    function downloadAPK() {
-      const apkName = document.getElementById("apkName").value.trim();
-      if (!apkName) {
-        alert("Please enter a valid APK name.");
-        return;
+    function predict() {
+      const inputs = [r1.value, r2.value, r3.value, r4.value].map(Number);
+      const big = inputs.filter(n => n >= 5).length;
+      const small = inputs.filter(n => n <= 4).length;
+
+      let prediction = "";
+      if (big === small) {
+        prediction = "Prediction: RANDOM (Low Confidence)";
+      } else if (small >= 3) {
+        prediction = "Prediction: BIG (AI Logic)";
+      } else {
+        prediction = "Prediction: SMALL (AI Logic)";
       }
 
-      const encodedQuery = encodeURIComponent(apkName);
-      const url = `https://apis.davidcyriltech.my.id/download/apk?text=${encodedQuery}`;
-      
-      // Redirect to the download URL
-      window.location.href = url;
+      document.getElementById("result").innerText = prediction;
+
+      setTimeout(() => {
+        r1.value = ""; r2.value = ""; r3.value = ""; r4.value = "";
+        document.getElementById("result").innerText = "";
+      }, 5000); // Auto Reset in 5 sec
     }
   </script>
+
 </body>
 </html>
