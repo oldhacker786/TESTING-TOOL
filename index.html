@@ -1,82 +1,133 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Wingo AI Predictor - 92Glory</title>
   <style>
     body {
+      margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #e9f0ff;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
       text-align: center;
-      padding: 20px;
     }
+
+    .container {
+      padding: 30px;
+      max-width: 500px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,255,255,0.1);
+      backdrop-filter: blur(6px);
+      margin-top: 40px;
+    }
+
     h1 {
-      color: #0044cc;
+      font-size: 28px;
+      color: #00f7ff;
+      margin-bottom: 10px;
     }
+
     .note {
-      background: #ffcccb;
+      background: rgba(255, 0, 0, 0.2);
       padding: 10px;
       border-radius: 10px;
       font-weight: bold;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      color: #ffaaaa;
     }
+
     input {
       width: 50px;
-      font-size: 18px;
-      text-align: center;
-      margin: 5px;
-      border: 2px solid #444;
-      border-radius: 6px;
-    }
-    button {
-      font-size: 16px;
-      padding: 10px 20px;
-      margin: 10px 5px;
-      background: #28a745;
-      color: white;
+      font-size: 20px;
+      margin: 6px;
+      padding: 6px;
       border: none;
       border-radius: 8px;
+      text-align: center;
+      background: #1c1c1c;
+      color: #00ffcc;
+    }
+
+    button {
+      font-size: 16px;
+      padding: 10px 18px;
+      margin: 10px 5px;
+      background: #00ffff;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00ffff;
       cursor: pointer;
+      transition: 0.3s;
     }
-    .link-btn {
-      background: #007bff;
+
+    button:hover {
+      background: #00cccc;
+      box-shadow: 0 0 15px #00cccc;
     }
+
     #result {
       margin-top: 20px;
       font-size: 22px;
       font-weight: bold;
-      color: darkgreen;
+      color: #00ff80;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #888;
+    }
+
+    .link-btn {
+      background: #ff00ff;
+      color: #fff;
+      margin-top: 5px;
+      box-shadow: 0 0 10px #ff00ff;
+    }
+
+    .link-btn:hover {
+      background: #cc00cc;
     }
   </style>
 </head>
 <body>
 
-  <div class="note">
-    🚨 IMPORTANT NOTE: This prediction tool works only for <b>92GLORY</b><br>
-    👇👇👇
+  <div class="container">
+
+    <div class="note">
+      🚨 IMPORTANT NOTE: This prediction tool works only for <b>92GLORY</b>
+    </div>
+
+    <button class="link-btn" onclick="window.open('https://www.92glory44.com/#/register?invitationCode=43816145180', '_blank')">
+      CLICK HERE TO CREATE NEW ACCOUNT
+    </button>
+
+    <button class="link-btn" onclick="window.open('https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09', '_blank')">
+      JOIN WHATSAPP CHANNEL
+    </button>
+
+    <h1>🎯 Wingo AI Prediction Tool</h1>
+    <p>Enter Last 5 Results (0–9):</p>
+
+    <input type="number" id="r1" min="0" max="9" oninput="nextFocus(this, 'r2')">
+    <input type="number" id="r2" min="0" max="9" oninput="nextFocus(this, 'r3')">
+    <input type="number" id="r3" min="0" max="9" oninput="nextFocus(this, 'r4')">
+    <input type="number" id="r4" min="0" max="9" oninput="nextFocus(this, 'r5')">
+    <input type="number" id="r5" min="0" max="9">
+    <br><br>
+
+    <button onclick="predict()">🔍 Predict</button>
+
+    <div id="result"></div>
+
+    <div class="footer">
+      🛠 Developed by <b>OLD-HACKER 👨‍💻</b>
+    </div>
   </div>
-
-  <button class="link-btn" onclick="window.open('https://www.92glory44.com/#/register?invitationCode=43816145180', '_blank')">
-    CLICK HERE TO CREATE NEW ACCOUNT
-  </button>
-
-  <button class="link-btn" onclick="window.open('https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09', '_blank')">
-    JOIN WHATSAPP CHANNEL
-  </button>
-
-  <hr>
-
-  <h1>🎯 Wingo AI Prediction Tool</h1>
-  <p>Enter Last 5 Results (0–9):</p>
-
-  <input type="number" id="r1" min="0" max="9" oninput="nextFocus(this, 'r2')">
-  <input type="number" id="r2" min="0" max="9" oninput="nextFocus(this, 'r3')">
-  <input type="number" id="r3" min="0" max="9" oninput="nextFocus(this, 'r4')">
-  <input type="number" id="r4" min="0" max="9" oninput="nextFocus(this, 'r5')">
-  <input type="number" id="r5" min="0" max="9">
-  <br><br>
-  <button onclick="predict()">Predict</button>
-
-  <div id="result"></div>
 
   <script>
     function nextFocus(current, nextId) {
@@ -105,7 +156,7 @@
         r1.value = ""; r2.value = ""; r3.value = ""; r4.value = ""; r5.value = "";
         document.getElementById("result").innerText = "";
         r1.focus();
-      }, 5000); // Auto Reset in 5 sec
+      }, 5000);
     }
   </script>
 
