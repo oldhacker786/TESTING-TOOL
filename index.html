@@ -66,20 +66,27 @@
   <hr>
 
   <h1>🎯 Wingo AI Prediction Tool</h1>
-  <p>Enter Last 4 Results (0–9):</p>
+  <p>Enter Last 5 Results (0–9):</p>
 
-  <input type="number" id="r1" min="0" max="9">
-  <input type="number" id="r2" min="0" max="9">
-  <input type="number" id="r3" min="0" max="9">
-  <input type="number" id="r4" min="0" max="9">
+  <input type="number" id="r1" min="0" max="9" oninput="nextFocus(this, 'r2')">
+  <input type="number" id="r2" min="0" max="9" oninput="nextFocus(this, 'r3')">
+  <input type="number" id="r3" min="0" max="9" oninput="nextFocus(this, 'r4')">
+  <input type="number" id="r4" min="0" max="9" oninput="nextFocus(this, 'r5')">
+  <input type="number" id="r5" min="0" max="9">
   <br><br>
   <button onclick="predict()">Predict</button>
 
   <div id="result"></div>
 
   <script>
+    function nextFocus(current, nextId) {
+      if (current.value.length === 1) {
+        document.getElementById(nextId).focus();
+      }
+    }
+
     function predict() {
-      const inputs = [r1.value, r2.value, r3.value, r4.value].map(Number);
+      const inputs = [r1.value, r2.value, r3.value, r4.value, r5.value].map(Number);
       const big = inputs.filter(n => n >= 5).length;
       const small = inputs.filter(n => n <= 4).length;
 
@@ -95,8 +102,9 @@
       document.getElementById("result").innerText = prediction;
 
       setTimeout(() => {
-        r1.value = ""; r2.value = ""; r3.value = ""; r4.value = "";
+        r1.value = ""; r2.value = ""; r3.value = ""; r4.value = ""; r5.value = "";
         document.getElementById("result").innerText = "";
+        r1.focus();
       }, 5000); // Auto Reset in 5 sec
     }
   </script>
