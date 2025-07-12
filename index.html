@@ -4,234 +4,513 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Big/Small AI Prediction Tool - OLD-HACKER</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#00ff00">
-    <link rel="icon" href="icon-192.png">
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Courier New', monospace;
-            background: #000;
+            background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
+            color: #00ff00;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ff00;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 12px;
+            color: #00ff0080;
+            margin-bottom: 20px;
+        }
+        
+        .whatsapp-btn {
+            background: linear-gradient(45deg, #25d366, #128c7e);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .whatsapp-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #25d366;
+        }
+        
+        .section {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-subtitle {
+            font-size: 12px;
+            color: #00ff0080;
+            margin-bottom: 15px;
+        }
+        
+        .button-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .btn-big {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            color: white;
+        }
+        
+        .btn-small {
+            background: linear-gradient(45deg, #5352ed, #3742fa);
+            color: white;
+        }
+        
+        .btn-clear {
+            background: linear-gradient(45deg, #747d8c, #57606f);
+            color: white;
+            flex: none;
+            padding: 10px 20px;
+            font-size: 12px;
+        }
+        
+        .btn-predict {
+            background: linear-gradient(45deg, #00ff00, #00cc00);
+            color: black;
+            width: 100%;
+            padding: 20px;
+            font-size: 16px;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results-display {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 60px;
+        }
+        
+        .result-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .result-number {
+            color: #00ff0080;
+            font-size: 12px;
+        }
+        
+        .result-outcome {
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .result-big {
+            color: #ff4757;
+        }
+        
+        .result-small {
+            color: #5352ed;
+        }
+        
+        .prediction-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .prediction-big {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+        }
+        
+        .prediction-small {
+            background: linear-gradient(45deg, #5352ed, #3742fa);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(83, 82, 237, 0.5);
+        }
+        
+        .prediction-info {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .info-badge {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 10px;
             color: #00ff00;
         }
-        .glow {
-            box-shadow: 0 0 10px #00ff00;
+        
+        .game-info {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
         }
-        .animate-spin {
-            animation: spin 1s linear infinite;
+        
+        .game-option {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
         }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        
+        .game-big {
+            background: linear-gradient(45deg, rgba(255, 71, 87, 0.2), rgba(255, 55, 66, 0.1));
+            border: 1px solid rgba(255, 71, 87, 0.3);
         }
-        .pulse-glow {
-            animation: pulse-glow 2s infinite;
+        
+        .game-small {
+            background: linear-gradient(45deg, rgba(83, 82, 237, 0.2), rgba(55, 66, 250, 0.1));
+            border: 1px solid rgba(83, 82, 237, 0.3);
         }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 5px #00ff00; }
-            50% { box-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
+        
+        .game-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
-        .big-button {
-            background: linear-gradient(45deg, #ff4444, #ff6666);
+        
+        .game-desc {
+            font-size: 10px;
+            color: #00ff0080;
         }
-        .small-button {
-            background: linear-gradient(45deg, #4444ff, #6666ff);
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
         }
-        .prediction-big {
-            background: linear-gradient(45deg, #ff4444, #ff6666);
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00ff00;
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: #00ff0080;
+        }
+        
+        .algorithm-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .algorithm-list li {
+            padding: 5px 0;
+            font-size: 12px;
+            color: #00ff0080;
+        }
+        
+        .algorithm-list li:before {
+            content: "• ";
+            color: #00ff00;
+            font-weight: bold;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            border-radius: 5px;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        
+        .history-outcome {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .history-id {
+            color: #00ff0080;
+        }
+        
+        .result-badge {
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .result-win {
+            background: #00ff00;
+            color: black;
+        }
+        
+        .result-loss {
+            background: #ff4757;
             color: white;
         }
-        .prediction-small {
-            background: linear-gradient(45deg, #4444ff, #6666ff);
-            color: white;
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+        }
+        
+        .footer-title {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .footer-subtitle {
+            font-size: 10px;
+            color: #00ff0080;
+            margin-bottom: 15px;
+        }
+        
+        .footer-copyright {
+            font-size: 10px;
+            color: #00ff0080;
+            margin-top: 20px;
+        }
+        
+        .empty-state {
+            color: #00ff0080;
+            font-size: 12px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .prediction-reasoning {
+            font-size: 10px;
+            color: #00ff0080;
+            margin: 10px 0;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .prediction-timestamp {
+            font-size: 10px;
+            color: #00ff0080;
+            margin-top: 10px;
+        }
+        
+        .based-on-indicator {
+            font-size: 10px;
+            color: #00ff0080;
+            margin-bottom: 10px;
         }
     </style>
 </head>
-<body class="min-h-screen bg-black text-green-400">
-    <!-- Header -->
-    <div class="border-b border-green-500/30 bg-black/90">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="text-green-400 text-2xl">🎯</div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-green-400">BIG/SMALL AI PREDICTION</h1>
-                        <p class="text-sm text-green-400/70">DEVELOPED BY OLD-HACKER</p>
-                    </div>
-                </div>
-                <button class="whatsapp-button bg-green-600 hover:bg-green-700 text-black font-bold px-4 py-2 rounded">
-                    🔗 JOIN WHATSAPP CHANNEL
-                </button>
-            </div>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🎯</div>
+            <div class="title">BIG/SMALL AI PREDICTION</div>
+            <div class="subtitle">DEVELOPED BY OLD-HACKER</div>
+            <a href="#" class="whatsapp-btn" onclick="openWhatsApp()">🔗 JOIN WHATSAPP CHANNEL</a>
         </div>
-    </div>
 
-    <div class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Last 5 Results Input -->
+        <div class="section">
+            <div class="section-title">📊 ENTER LAST 5 RESULTS</div>
+            <div class="section-subtitle">Enter the last 5 game results for more accurate AI predictions</div>
             
-            <!-- Main Prediction Panel -->
-            <div class="lg:col-span-2 space-y-6">
-                
-                <!-- Last 5 Results Input -->
-                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-6">
-                    <h2 class="text-green-400 text-lg font-bold mb-4 flex items-center">
-                        📊 ENTER LAST 5 RESULTS
-                    </h2>
-                    <div class="text-sm text-green-400/70 mb-4">
-                        Enter the last 5 game results for more accurate AI predictions
-                    </div>
-                    
-                    <!-- Big/Small Input Buttons -->
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <button id="add-big" class="big-button hover:opacity-80 text-white font-bold py-4 px-6 rounded transition-all duration-200 hover:scale-105">
-                            📈 ADD BIG
-                        </button>
-                        <button id="add-small" class="small-button hover:opacity-80 text-white font-bold py-4 px-6 rounded transition-all duration-200 hover:scale-105">
-                            📉 ADD SMALL
-                        </button>
-                    </div>
-                    
-                    <!-- Clear Button -->
-                    <div class="text-center mb-4">
-                        <button id="clear-results" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded text-sm">
-                            🗑️ CLEAR ALL
-                        </button>
-                    </div>
-                    
-                    <!-- Last 5 Results Display -->
-                    <div class="bg-black/30 border border-green-500/20 rounded-lg p-4">
-                        <div class="text-sm text-green-400/70 mb-2 uppercase tracking-wider">Last 5 Results:</div>
-                        <div id="last-five-display" class="space-y-2">
-                            <div class="text-green-400/50 text-sm">No results entered yet</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- AI Prediction Engine -->
-                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-6">
-                    <h2 class="text-green-400 text-lg font-bold mb-6 flex items-center">
-                        🧠 AI PREDICTION ENGINE
-                    </h2>
-                    
-                    <!-- Prediction Display -->
-                    <div id="prediction-container" class="mb-6">
-                        <!-- Prediction will be inserted here -->
-                    </div>
-
-                    <!-- Prediction Button -->
-                    <div class="text-center mb-6">
-                        <button id="predict-button" class="bg-green-600 hover:bg-green-700 text-black font-bold px-8 py-3 text-lg rounded glow pulse-glow">
-                            🎯 GENERATE PREDICTION
-                        </button>
-                    </div>
-
-                    <!-- Big/Small Legend -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="text-center">
-                            <div class="big-button h-16 rounded-lg mb-2 flex items-center justify-center">
-                                <span class="text-white font-bold text-xl">📈 BIG</span>
-                            </div>
-                            <div class="text-sm text-green-400">Sum: 11-17 (Dice)</div>
-                            <div class="text-xs text-green-400/70">High Numbers</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="small-button h-16 rounded-lg mb-2 flex items-center justify-center">
-                                <span class="text-white font-bold text-xl">📉 SMALL</span>
-                            </div>
-                            <div class="text-sm text-green-400">Sum: 4-10 (Dice)</div>
-                            <div class="text-xs text-green-400/70">Low Numbers</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="button-row">
+                <button class="btn btn-big" id="add-big">📈 ADD BIG</button>
+                <button class="btn btn-small" id="add-small">📉 ADD SMALL</button>
             </div>
+            
+            <div style="text-align: center; margin-bottom: 15px;">
+                <button class="btn btn-clear" id="clear-results">🗑️ CLEAR ALL</button>
+            </div>
+            
+            <div style="margin-bottom: 10px; font-size: 12px; font-weight: bold;">Last 5 Results:</div>
+            <div class="results-display" id="last-five-display">
+                <div class="empty-state">No results entered yet</div>
+            </div>
+        </div>
 
-            <!-- Sidebar -->
-            <div class="space-y-6">
-                
-                <!-- Stats Card -->
-                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-4">
-                    <h3 class="text-green-400 text-sm uppercase tracking-wider mb-4">
-                        SYSTEM STATS
-                    </h3>
-                    <div class="space-y-3">
-                        <div class="flex justify-between">
-                            <span class="text-green-400/70">Total Predictions:</span>
-                            <span id="total-predictions" class="text-green-400 font-bold">89</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-green-400/70">Successful:</span>
-                            <span id="successful-predictions" class="text-green-400 font-bold">73</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-green-400/70">Accuracy:</span>
-                            <span id="accuracy-rate" class="text-green-400 font-bold">82.0%</span>
-                        </div>
-                    </div>
+        <!-- AI Prediction Engine -->
+        <div class="section">
+            <div class="section-title">🧠 AI PREDICTION ENGINE</div>
+            
+            <button class="btn btn-predict" id="predict-button">🎯 GENERATE PREDICTION</button>
+            
+            <div id="prediction-container"></div>
+            
+            <!-- Game Info -->
+            <div class="game-info">
+                <div class="game-option game-big">
+                    <div class="game-title">📈 BIG</div>
+                    <div class="game-desc">Sum: 11-17 (Dice)</div>
+                    <div class="game-desc">High Numbers</div>
                 </div>
-
-                <!-- Algorithm Info -->
-                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-4">
-                    <h3 class="text-green-400 text-sm uppercase tracking-wider mb-4">
-                        AI ALGORITHM
-                    </h3>
-                    <div class="space-y-2 text-xs text-green-400/70">
-                        <div>• Big/Small Pattern Analysis</div>
-                        <div>• Probability Distribution</div>
-                        <div>• Streak Detection</div>
-                        <div>• Frequency Balancing</div>
-                        <div>• Last 5 Results Integration</div>
-                        <div>• Anti-Pattern Recognition</div>
-                    </div>
-                </div>
-
-                <!-- Recent History -->
-                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-4">
-                    <h3 class="text-green-400 text-sm uppercase tracking-wider mb-4">
-                        RECENT HISTORY
-                    </h3>
-                    <div id="history-container">
-                        <!-- History items will be inserted here -->
-                    </div>
-                </div>
-
-                <!-- WhatsApp Channel Card -->
-                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-4 text-center">
-                    <div class="text-green-400 font-bold mb-2">JOIN OUR COMMUNITY</div>
-                    <div class="text-xs text-green-400/70 mb-4">
-                        Get exclusive tips and updates
-                    </div>
-                    <button class="whatsapp-button w-full bg-green-600 hover:bg-green-700 text-black font-bold py-2 px-4 rounded">
-                        🔗 WHATSAPP CHANNEL
-                    </button>
+                <div class="game-option game-small">
+                    <div class="game-title">📉 SMALL</div>
+                    <div class="game-desc">Sum: 4-10 (Dice)</div>
+                    <div class="game-desc">Low Numbers</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Footer -->
-    <div class="border-t border-green-500/30 bg-black/90 mt-12">
-        <div class="container mx-auto px-4 py-4 text-center">
-            <p class="text-green-400/70 text-sm">
-                © 2025 OLD-HACKER | Big/Small AI Prediction System v1.0
-            </p>
+        <!-- System Stats -->
+        <div class="section">
+            <div class="section-title">📊 SYSTEM STATS</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-predictions">89</div>
+                    <div class="stat-label">Total Predictions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="successful-predictions">73</div>
+                    <div class="stat-label">Successful</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="accuracy-rate">82%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Algorithm -->
+        <div class="section">
+            <div class="section-title">🤖 AI ALGORITHM</div>
+            <ul class="algorithm-list">
+                <li>Big/Small Pattern Analysis</li>
+                <li>Probability Distribution</li>
+                <li>Streak Detection</li>
+                <li>Frequency Balancing</li>
+                <li>Last 5 Results Integration</li>
+                <li>Anti-Pattern Recognition</li>
+            </ul>
+        </div>
+
+        <!-- Recent History -->
+        <div class="section">
+            <div class="section-title">📈 RECENT HISTORY</div>
+            <div id="history-container"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-title">JOIN OUR COMMUNITY</div>
+            <div class="footer-subtitle">Get exclusive tips and updates</div>
+            <a href="#" class="whatsapp-btn" onclick="openWhatsApp()">🔗 WHATSAPP CHANNEL</a>
+            <div class="footer-copyright">© 2025 OLD-HACKER | Big/Small AI Prediction System v1.0</div>
         </div>
     </div>
 
+    <script src="cordova.js"></script>
     <script src="big-small-app.js"></script>
     <script>
-        // Register service worker for PWA functionality
+        // Register service worker if supported
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                        console.log('ServiceWorker registration successful');
-                    })
-                    .catch(function(err) {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
+            navigator.serviceWorker.register('sw.js')
+                .then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                })
+                .catch(function(err) {
+                    console.log('ServiceWorker registration failed');
+                });
         }
     </script>
 </body>
 </html>
-
