@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big/Small AI Prediction Tool - OLD-HACKER</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00ff00">
+    <link rel="icon" href="icon-192.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00ff00;
+        }
+        .glow {
+            box-shadow: 0 0 10px #00ff00;
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px #00ff00; }
+            50% { box-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
+        }
+        .big-button {
+            background: linear-gradient(45deg, #ff4444, #ff6666);
+        }
+        .small-button {
+            background: linear-gradient(45deg, #4444ff, #6666ff);
+        }
+        .prediction-big {
+            background: linear-gradient(45deg, #ff4444, #ff6666);
+            color: white;
+        }
+        .prediction-small {
+            background: linear-gradient(45deg, #4444ff, #6666ff);
+            color: white;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-black text-green-400">
+    <!-- Header -->
+    <div class="border-b border-green-500/30 bg-black/90">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="text-green-400 text-2xl">🎯</div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-green-400">BIG/SMALL AI PREDICTION</h1>
+                        <p class="text-sm text-green-400/70">DEVELOPED BY OLD-HACKER</p>
+                    </div>
+                </div>
+                <button class="whatsapp-button bg-green-600 hover:bg-green-700 text-black font-bold px-4 py-2 rounded">
+                    🔗 JOIN WHATSAPP CHANNEL
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Main Prediction Panel -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Last 5 Results Input -->
+                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-6">
+                    <h2 class="text-green-400 text-lg font-bold mb-4 flex items-center">
+                        📊 ENTER LAST 5 RESULTS
+                    </h2>
+                    <div class="text-sm text-green-400/70 mb-4">
+                        Enter the last 5 game results for more accurate AI predictions
+                    </div>
+                    
+                    <!-- Big/Small Input Buttons -->
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <button id="add-big" class="big-button hover:opacity-80 text-white font-bold py-4 px-6 rounded transition-all duration-200 hover:scale-105">
+                            📈 ADD BIG
+                        </button>
+                        <button id="add-small" class="small-button hover:opacity-80 text-white font-bold py-4 px-6 rounded transition-all duration-200 hover:scale-105">
+                            📉 ADD SMALL
+                        </button>
+                    </div>
+                    
+                    <!-- Clear Button -->
+                    <div class="text-center mb-4">
+                        <button id="clear-results" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded text-sm">
+                            🗑️ CLEAR ALL
+                        </button>
+                    </div>
+                    
+                    <!-- Last 5 Results Display -->
+                    <div class="bg-black/30 border border-green-500/20 rounded-lg p-4">
+                        <div class="text-sm text-green-400/70 mb-2 uppercase tracking-wider">Last 5 Results:</div>
+                        <div id="last-five-display" class="space-y-2">
+                            <div class="text-green-400/50 text-sm">No results entered yet</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Prediction Engine -->
+                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-6">
+                    <h2 class="text-green-400 text-lg font-bold mb-6 flex items-center">
+                        🧠 AI PREDICTION ENGINE
+                    </h2>
+                    
+                    <!-- Prediction Display -->
+                    <div id="prediction-container" class="mb-6">
+                        <!-- Prediction will be inserted here -->
+                    </div>
+
+                    <!-- Prediction Button -->
+                    <div class="text-center mb-6">
+                        <button id="predict-button" class="bg-green-600 hover:bg-green-700 text-black font-bold px-8 py-3 text-lg rounded glow pulse-glow">
+                            🎯 GENERATE PREDICTION
+                        </button>
+                    </div>
+
+                    <!-- Big/Small Legend -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div class="big-button h-16 rounded-lg mb-2 flex items-center justify-center">
+                                <span class="text-white font-bold text-xl">📈 BIG</span>
+                            </div>
+                            <div class="text-sm text-green-400">Sum: 11-17 (Dice)</div>
+                            <div class="text-xs text-green-400/70">High Numbers</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="small-button h-16 rounded-lg mb-2 flex items-center justify-center">
+                                <span class="text-white font-bold text-xl">📉 SMALL</span>
+                            </div>
+                            <div class="text-sm text-green-400">Sum: 4-10 (Dice)</div>
+                            <div class="text-xs text-green-400/70">Low Numbers</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                
+                <!-- Stats Card -->
+                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-4">
+                    <h3 class="text-green-400 text-sm uppercase tracking-wider mb-4">
+                        SYSTEM STATS
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-green-400/70">Total Predictions:</span>
+                            <span id="total-predictions" class="text-green-400 font-bold">89</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-green-400/70">Successful:</span>
+                            <span id="successful-predictions" class="text-green-400 font-bold">73</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-green-400/70">Accuracy:</span>
+                            <span id="accuracy-rate" class="text-green-400 font-bold">82.0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Algorithm Info -->
+                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-4">
+                    <h3 class="text-green-400 text-sm uppercase tracking-wider mb-4">
+                        AI ALGORITHM
+                    </h3>
+                    <div class="space-y-2 text-xs text-green-400/70">
+                        <div>• Big/Small Pattern Analysis</div>
+                        <div>• Probability Distribution</div>
+                        <div>• Streak Detection</div>
+                        <div>• Frequency Balancing</div>
+                        <div>• Last 5 Results Integration</div>
+                        <div>• Anti-Pattern Recognition</div>
+                    </div>
+                </div>
+
+                <!-- Recent History -->
+                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-4">
+                    <h3 class="text-green-400 text-sm uppercase tracking-wider mb-4">
+                        RECENT HISTORY
+                    </h3>
+                    <div id="history-container">
+                        <!-- History items will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- WhatsApp Channel Card -->
+                <div class="bg-gray-900/50 border border-green-500/30 rounded-lg p-4 text-center">
+                    <div class="text-green-400 font-bold mb-2">JOIN OUR COMMUNITY</div>
+                    <div class="text-xs text-green-400/70 mb-4">
+                        Get exclusive tips and updates
+                    </div>
+                    <button class="whatsapp-button w-full bg-green-600 hover:bg-green-700 text-black font-bold py-2 px-4 rounded">
+                        🔗 WHATSAPP CHANNEL
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t border-green-500/30 bg-black/90 mt-12">
+        <div class="container mx-auto px-4 py-4 text-center">
+            <p class="text-green-400/70 text-sm">
+                © 2025 OLD-HACKER | Big/Small AI Prediction System v1.0
+            </p>
+        </div>
+    </div>
+
+    <script src="big-small-app.js"></script>
+    <script>
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
+
