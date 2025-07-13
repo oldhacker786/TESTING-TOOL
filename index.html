@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Teen Patti AI Predictor</title>
+  <title>TEEN PATTI AI PREDICTOR</title>
   <style>
     body {
       background-color: #000;
@@ -75,9 +75,9 @@
 </head>
 <body>
 
-  <h1>🐅 Teen Patti Tiger Dragon 🐉</h1>
+  <h1>🐅 TEEN PATTI TIGER DRAGON 🐉</h1>
 
-  <h3>Enter Last 4 Results (T, D, Tie):</h3>
+  <h3>ENTER LAST 4 RESULTS (T/D):</h3>
   <div>
     <input id="r1" maxlength="4" oninput="handleInput(this, 'r2')">
     <input id="r2" maxlength="4" oninput="handleInput(this, 'r3')">
@@ -85,11 +85,11 @@
     <input id="r4" maxlength="4">
   </div>
 
-  <button onclick="predict()">Predict Now</button>
+  <button onclick="predict()">PREDICTION NOW</button>
 
   <div class="loading-bar"><div class="fill" id="bar"></div></div>
 
-  <div class="result-area" id="predictionResult">Waiting...</div>
+  <div class="result-area" id="predictionResult">WAITING...</div>
 
   <div class="last-results" id="lastResultsShow"></div>
 
@@ -106,7 +106,7 @@
   </div>
 
   <script>
-    const results = ["🐅 Tiger", "🐉 Dragon", "🂡 Tie"];
+    const results = ["🐅 TIGER", "🐉 DRAGON", "🂡 TIE"];
 
     function handleInput(current, nextId) {
       let value = current.value.trim().toLowerCase();
@@ -126,7 +126,7 @@
 
       document.getElementById("predictionResult").innerText = "🔄 Predicting...";
       document.getElementById("lastResultsShow").innerText =
-        `📊 Last 4 Results: ${r1}, ${r2}, ${r3}, ${r4}`;
+        `📊 LAST 4 RESULTS: ${r1}, ${r2}, ${r3}, ${r4}`;
 
       setTimeout(() => {
         const random = results[Math.floor(Math.random() * results.length)];
@@ -137,7 +137,7 @@
           document.getElementById("r2").value = "";
           document.getElementById("r3").value = "";
           document.getElementById("r4").value = "";
-          document.getElementById("predictionResult").innerText = "Waiting...";
+          document.getElementById("predictionResult").innerText = "WAITING...";
           document.getElementById("lastResultsShow").innerText = "";
         }, 4000);
       }, 2000);
