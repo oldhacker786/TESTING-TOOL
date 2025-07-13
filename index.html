@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TEEN PATTI AI PREDICTOR</title>
+  <title>TEENPATTI AI PREDICTOR</title>
   <style>
     body {
       background-color: #000;
@@ -32,24 +32,32 @@
       border-radius: 8px;
       cursor: pointer;
     }
-    .loading-bar {
+    .progress-container {
       margin: 20px auto;
-      height: 20px;
       width: 80%;
-      background: #222;
-      border-radius: 10px;
+      height: 25px;
+      background-color: #222;
+      border-radius: 15px;
       overflow: hidden;
+      position: relative;
     }
-    .fill {
-      width: 0%;
+    .progress-bar {
       height: 100%;
-      background: linear-gradient(to right, #00ffcc, #006666);
-      animation: fillBar 2s forwards;
+      width: 0%;
+      background: linear-gradient(to right, #00ffcc, #009999);
+      transition: width 0.2s ease;
     }
-    @keyframes fillBar {
-      to { width: 100%; }
+    .progress-text {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+      color: #00ffcc;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 25px;
     }
-    .note {
+    .note, .footer {
       margin-top: 30px;
       font-size: 14px;
       color: #aaa;
@@ -66,16 +74,11 @@
       margin-top: 10px;
       font-size: 18px;
     }
-    .footer {
-      margin-top: 40px;
-      font-size: 13px;
-      color: #555;
-    }
   </style>
 </head>
 <body>
 
-  <h1>🐅 TEEN PATTI TIGER DRAGON 🐉</h1>
+  <h1>🐅 TEEN PATTI TIGER DRAGON AI 🐉</h1>
 
   <h3>ENTER LAST 4 RESULTS (T/D):</h3>
   <div>
@@ -87,14 +90,16 @@
 
   <button onclick="predict()">PREDICTION NOW</button>
 
-  <div class="loading-bar"><div class="fill" id="bar"></div></div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="progress-text" id="progressText">0%</div>
+  </div>
 
   <div class="result-area" id="predictionResult">WAITING...</div>
-
   <div class="last-results" id="lastResultsShow"></div>
 
   <div class="note">
-    ⚠️ <b>IMPORTANT NOTE:</b><br>
+    ⚠️ <strong>IMPORTANT NOTE:</strong><br>
     This is only an AI prediction tool, not any hack.<br>
     Play at your own risk.<br><br>
     👉 <a href="https://3pattino1.com?from_gameid=7438326&channelCode=7417619" target="_blank">CLICK HERE TO CREATE GAME ACCOUNT</a>
@@ -106,13 +111,25 @@
   </div>
 
   <script>
-    const results = ["🐅 TIGER", "🐉 DRAGON", "🂡 TIE"];
-
     function handleInput(current, nextId) {
-      let value = current.value.trim().toLowerCase();
+      const value = current.value.trim().toLowerCase();
       if (["t", "d", "tie"].includes(value)) {
         document.getElementById(nextId).focus();
       }
+    }
+
+    function smartPredict(last) {
+      let tCount = 0, dCount = 0, tieCount = 0;
+      last.forEach(val => {
+        val = val.toLowerCase();
+        if (val === "t") tCount++;
+        else if (val === "d") dCount++;
+        else if (val === "tie") tieCount++;
+      });
+
+      if (tCount > dCount) return "🐉 DRAGON";
+      else if (dCount > tCount) return "🐅 TIGER";
+      else return tieCount >= 2 ? "🂡 TIE" : ["🐅 TIGER", "🐉 DRAGON"][Math.floor(Math.random() * 2)];
     }
 
     function predict() {
@@ -121,26 +138,37 @@
       const r3 = document.getElementById("r3").value || "-";
       const r4 = document.getElementById("r4").value || "-";
 
-      document.getElementById("bar").style.width = "0%";
-      document.getElementById("bar").style.animation = "fillBar 2s forwards";
+      const lastResults = [r1, r2, r3, r4];
+      document.getElementById("lastResultsShow").innerText = `📊 LAST 4: ${r1}, ${r2}, ${r3}, ${r4}`;
+      document.getElementById("predictionResult").innerText = "⏳ AI IS THINKING...";
 
-      document.getElementById("predictionResult").innerText = "🔄 Predicting...";
-      document.getElementById("lastResultsShow").innerText =
-        `📊 LAST 4 RESULTS: ${r1}, ${r2}, ${r3}, ${r4}`;
+      // Reset Progress
+      const bar = document.getElementById("progressBar");
+      const text = document.getElementById("progressText");
+      bar.style.width = "0%";
+      text.innerText = "0%";
 
-      setTimeout(() => {
-        const random = results[Math.floor(Math.random() * results.length)];
-        document.getElementById("predictionResult").innerText = `🔮 AI Predicts: ${random}`;
+      let progress = 0;
+      const interval = setInterval(() => {
+        if (progress >= 100) {
+          clearInterval(interval);
+          const result = smartPredict(lastResults);
+          document.getElementById("predictionResult").innerText = `NEXT WINNER IS: ${result}`;
 
-        setTimeout(() => {
-          document.getElementById("r1").value = "";
-          document.getElementById("r2").value = "";
-          document.getElementById("r3").value = "";
-          document.getElementById("r4").value = "";
-          document.getElementById("predictionResult").innerText = "WAITING...";
-          document.getElementById("lastResultsShow").innerText = "";
-        }, 4000);
-      }, 2000);
+          setTimeout(() => {
+            ["r1", "r2", "r3", "r4"].forEach(id => document.getElementById(id).value = "");
+            document.getElementById("predictionResult").innerText = "Waiting...";
+            document.getElementById("lastResultsShow").innerText = "";
+            bar.style.width = "0%";
+            text.innerText = "0%";
+          }, 4000);
+
+        } else {
+          progress += 5;
+          bar.style.width = progress + "%";
+          text.innerText = progress + "%";
+        }
+      }, 100);
     }
   </script>
 
