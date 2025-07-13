@@ -2,111 +2,159 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Teen Patti Tiger Dragon - AI Predictor</title>
+  <title>Teen Patti AI Predictor</title>
   <style>
     body {
-      background-color: #0d0d0d;
+      background-color: #0a0a0a;
       color: #00ffcc;
       font-family: 'Courier New', monospace;
       text-align: center;
       padding: 20px;
     }
 
-    h1 {
-      color: #00ffcc;
-      margin-bottom: 10px;
-    }
-
-    .loading-bar {
-      width: 80%;
-      height: 20px;
-      background: #333;
-      border-radius: 10px;
-      margin: 20px auto;
-      overflow: hidden;
-    }
-
-    .loading-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(to right, #00ffcc, #009999);
-      animation: loading 3s forwards;
-    }
-
-    @keyframes loading {
-      0% { width: 0%; }
-      100% { width: 100%; }
-    }
-
-    .result-box {
+    input {
+      width: 60px;
+      padding: 10px;
+      margin: 5px;
+      font-size: 18px;
+      text-align: center;
       background: #1a1a1a;
       border: 2px solid #00ffcc;
-      padding: 15px;
-      margin: 20px auto;
-      width: 80%;
-      border-radius: 10px;
+      color: #00ffcc;
+      border-radius: 6px;
     }
 
     button {
+      margin-top: 15px;
+      padding: 10px 25px;
+      font-size: 18px;
+      border: none;
       background: #00ffcc;
       color: #000;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 15px;
     }
 
-    .footer {
+    .loading-bar {
+      margin: 20px auto;
+      height: 20px;
+      width: 80%;
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(to right, #00ffcc, #006666);
+      animation: fillBar 2s forwards;
+    }
+
+    @keyframes fillBar {
+      to { width: 100%; }
+    }
+
+    .note {
       margin-top: 30px;
-      font-size: 14px;
       color: #999;
+      font-size: 14px;
+      line-height: 1.6;
     }
 
     a {
       color: #00ffcc;
-      text-decoration: none;
+      text-decoration: underline;
+    }
+
+    .result-area {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+
+    .last-results {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 13px;
+      color: #555;
     }
   </style>
 </head>
 <body>
+
   <h1>🐅 Teen Patti Tiger Dragon 🐉</h1>
-  <div class="loading-bar"><div class="loading-fill" id="loadBar"></div></div>
 
-  <div class="result-box">
-    <h2>🔮 AI Prediction:</h2>
-    <p id="prediction">Waiting...</p>
-    
-    <h3>🧾 Last 4 Results:</h3>
-    <ul id="lastResults" style="list-style: none; padding: 0;"></ul>
+  <h3>Enter Last 4 Results:</h3>
+  <div>
+    <input type="text" maxlength="6" id="r1" oninput="moveNext(this, 'r2')">
+    <input type="text" maxlength="6" id="r2" oninput="moveNext(this, 'r3')">
+    <input type="text" maxlength="6" id="r3" oninput="moveNext(this, 'r4')">
+    <input type="text" maxlength="6" id="r4">
+  </div>
 
-    <button onclick="generatePrediction()">Predict Now</button>
+  <button onclick="predict()">Predict Now</button>
+
+  <div class="loading-bar">
+    <div class="fill" id="bar"></div>
+  </div>
+
+  <div class="result-area" id="predictionResult">Waiting...</div>
+
+  <div class="last-results" id="lastResultsShow"></div>
+
+  <div class="note">
+    ⚠️ <strong>IMPORTANT NOTE:</strong><br>
+    This is only an AI prediction tool, not any hack.<br>
+    Play at your own risk.<br><br>
+    👉 <a href="https://3pattino1.com?from_gameid=7438326&channelCode=7417619" target="_blank">CLICK HERE TO CREATE GAME ACCOUNT</a>
   </div>
 
   <div class="footer">
     DEVELOPED BY <strong>OLD-HACKER</strong><br>
-    👉 <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank">Join Our WhatsApp Channel</a>
+    <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank">Join Our WhatsApp Channel</a>
   </div>
 
   <script>
     const results = ["🐅 Tiger", "🐉 Dragon", "🂡 Tie"];
-    let lastFour = [];
 
-    function generatePrediction() {
-      const randomResult = results[Math.floor(Math.random() * results.length)];
-      document.getElementById("prediction").innerText = randomResult;
+    function moveNext(current, nextId) {
+      if (current.value.length >= 3) {
+        document.getElementById(nextId).focus();
+      }
+    }
 
-      lastFour.unshift(randomResult);
-      if (lastFour.length > 4) lastFour.pop();
+    function predict() {
+      const r1 = document.getElementById("r1").value || "-";
+      const r2 = document.getElementById("r2").value || "-";
+      const r3 = document.getElementById("r3").value || "-";
+      const r4 = document.getElementById("r4").value || "-";
 
-      document.getElementById("lastResults").innerHTML = lastFour
-        .map(r => `<li>${r}</li>`)
-        .join("");
+      document.getElementById("lastResultsShow").innerHTML =
+        `<b>Last 4 Results:</b> ${r1}, ${r2}, ${r3}, ${r4}`;
 
-      document.getElementById("loadBar").style.width = "0%";
-      document.getElementById("loadBar").style.animation = "loading 3s forwards";
+      const random = results[Math.floor(Math.random() * results.length)];
+      document.getElementById("bar").style.width = "0%";
+      document.getElementById("bar").style.animation = "fillBar 2s forwards";
+
+      setTimeout(() => {
+        document.getElementById("predictionResult").innerText = `🔮 AI Predicts: ${random}`;
+
+        // Reset after show
+        setTimeout(() => {
+          document.getElementById("r1").value = "";
+          document.getElementById("r2").value = "";
+          document.getElementById("r3").value = "";
+          document.getElementById("r4").value = "";
+          document.getElementById("predictionResult").innerText = "Waiting...";
+          document.getElementById("lastResultsShow").innerText = "";
+        }, 4000);
+      }, 2000);
     }
   </script>
+
 </body>
-</html>
+  </html>
