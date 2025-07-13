@@ -5,25 +5,23 @@
   <title>Teen Patti AI Predictor</title>
   <style>
     body {
-      background-color: #0a0a0a;
+      background-color: #000;
       color: #00ffcc;
-      font-family: 'Courier New', monospace;
+      font-family: monospace;
       text-align: center;
       padding: 20px;
     }
-
     input {
-      width: 60px;
+      width: 70px;
       padding: 10px;
       margin: 5px;
       font-size: 18px;
-      text-align: center;
-      background: #1a1a1a;
-      border: 2px solid #00ffcc;
+      background: #111;
       color: #00ffcc;
+      border: 2px solid #00ffcc;
       border-radius: 6px;
+      text-align: center;
     }
-
     button {
       margin-top: 15px;
       padding: 10px 25px;
@@ -34,7 +32,6 @@
       border-radius: 8px;
       cursor: pointer;
     }
-
     .loading-bar {
       margin: 20px auto;
       height: 20px;
@@ -43,40 +40,32 @@
       border-radius: 10px;
       overflow: hidden;
     }
-
     .fill {
       width: 0%;
       height: 100%;
       background: linear-gradient(to right, #00ffcc, #006666);
       animation: fillBar 2s forwards;
     }
-
     @keyframes fillBar {
       to { width: 100%; }
     }
-
     .note {
       margin-top: 30px;
-      color: #999;
       font-size: 14px;
-      line-height: 1.6;
+      color: #aaa;
     }
-
     a {
       color: #00ffcc;
       text-decoration: underline;
     }
-
     .result-area {
       margin-top: 20px;
       font-size: 24px;
     }
-
     .last-results {
       margin-top: 10px;
       font-size: 18px;
     }
-
     .footer {
       margin-top: 40px;
       font-size: 13px;
@@ -88,41 +77,40 @@
 
   <h1>🐅 Teen Patti Tiger Dragon 🐉</h1>
 
-  <h3>Enter Last 4 Results:</h3>
+  <h3>Enter Last 4 Results (T, D, Tie):</h3>
   <div>
-    <input type="text" maxlength="6" id="r1" oninput="moveNext(this, 'r2')">
-    <input type="text" maxlength="6" id="r2" oninput="moveNext(this, 'r3')">
-    <input type="text" maxlength="6" id="r3" oninput="moveNext(this, 'r4')">
-    <input type="text" maxlength="6" id="r4">
+    <input id="r1" maxlength="4" oninput="handleInput(this, 'r2')">
+    <input id="r2" maxlength="4" oninput="handleInput(this, 'r3')">
+    <input id="r3" maxlength="4" oninput="handleInput(this, 'r4')">
+    <input id="r4" maxlength="4">
   </div>
 
   <button onclick="predict()">Predict Now</button>
 
-  <div class="loading-bar">
-    <div class="fill" id="bar"></div>
-  </div>
+  <div class="loading-bar"><div class="fill" id="bar"></div></div>
 
   <div class="result-area" id="predictionResult">Waiting...</div>
 
   <div class="last-results" id="lastResultsShow"></div>
 
   <div class="note">
-    ⚠️ <strong>IMPORTANT NOTE:</strong><br>
+    ⚠️ <b>IMPORTANT NOTE:</b><br>
     This is only an AI prediction tool, not any hack.<br>
     Play at your own risk.<br><br>
     👉 <a href="https://3pattino1.com?from_gameid=7438326&channelCode=7417619" target="_blank">CLICK HERE TO CREATE GAME ACCOUNT</a>
   </div>
 
   <div class="footer">
-    DEVELOPED BY <strong>OLD-HACKER</strong><br>
-    <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank">Join Our WhatsApp Channel</a>
+    DEVELOPED BY <b>OLD-HACKER</b><br>
+    <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank">Join WhatsApp Channel</a>
   </div>
 
   <script>
     const results = ["🐅 Tiger", "🐉 Dragon", "🂡 Tie"];
 
-    function moveNext(current, nextId) {
-      if (current.value.length >= 3) {
+    function handleInput(current, nextId) {
+      let value = current.value.trim().toLowerCase();
+      if (["t", "d", "tie"].includes(value)) {
         document.getElementById(nextId).focus();
       }
     }
@@ -133,17 +121,17 @@
       const r3 = document.getElementById("r3").value || "-";
       const r4 = document.getElementById("r4").value || "-";
 
-      document.getElementById("lastResultsShow").innerHTML =
-        `<b>Last 4 Results:</b> ${r1}, ${r2}, ${r3}, ${r4}`;
-
-      const random = results[Math.floor(Math.random() * results.length)];
       document.getElementById("bar").style.width = "0%";
       document.getElementById("bar").style.animation = "fillBar 2s forwards";
 
+      document.getElementById("predictionResult").innerText = "🔄 Predicting...";
+      document.getElementById("lastResultsShow").innerText =
+        `📊 Last 4 Results: ${r1}, ${r2}, ${r3}, ${r4}`;
+
       setTimeout(() => {
+        const random = results[Math.floor(Math.random() * results.length)];
         document.getElementById("predictionResult").innerText = `🔮 AI Predicts: ${random}`;
 
-        // Reset after show
         setTimeout(() => {
           document.getElementById("r1").value = "";
           document.getElementById("r2").value = "";
@@ -157,4 +145,4 @@
   </script>
 
 </body>
-  </html>
+</html>
