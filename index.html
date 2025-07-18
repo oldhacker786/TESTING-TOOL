@@ -1,0 +1,426 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>SmartSMS</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700|Roboto+Slab:300,400,700|Play:400,700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:200,400,700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Muli:300,400,700,900" rel="stylesheet">
+        <link rel="stylesheet" href="assets/login/fonts/icomoon/style.css">
+        <link rel="stylesheet" href="assets/login/css/bootstrap.min.css">
+        <link rel="stylesheet" href="assets/login/css/jquery-ui.css">
+        <link rel="stylesheet" href="assets/login/fonts/flaticon/font/flaticon.css">
+        <link rel="stylesheet" href="assets/login/css/aos.css">
+        <link rel="stylesheet" href="assets/login/css/style.css?kill_cache=1">
+        <link rel="stylesheet" href="assets/vendor/font-awesome/css/fontawesome-all.min.css">
+
+
+        <script src="assets/login/js/jquery-3.3.1.min.js"></script>
+        <script src="assets/login/js/jquery-migrate-3.0.1.min.js"></script>
+
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/apple-touch-icon.png">
+        <link rel="shortcut icon" href="assets/favicon.ico">
+    </head>
+    <body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
+    
+    <div class="site-wrap">
+
+        <div class="site-mobile-menu site-navbar-target">
+            <div class="site-mobile-menu-header">
+                <div class="site-mobile-menu-close mt-3">
+                    <span class="icon-close2 js-menu-toggle"></span>
+                </div>
+            </div>
+            <div class="site-mobile-menu-body"></div>
+        </div>
+     
+        
+        <header class="site-navbar py-4 js-sticky-header site-navbar-target" role="banner" style="display:none;">
+            
+            <div class="container-fluid">
+                <div class="d-flex align-items-center">
+                    <div class="site-logo mr-auto w-25"><a href="index.php"><img src="/logo/logo_30.png?a=b" height="38" alt=""></a></div>
+
+                    <div class="mx-auto text-center">
+                        <nav class="site-navigation position-relative text-right" role="navigation">
+                            <ul class="site-menu main-menu js-clone-nav mx-auto d-none d-lg-block  m-0 p-0">
+                                <li><a href="#home-section" class="nav-link">Home</a></li>
+                                <li><a href="#courses-section" class="nav-link">Courses</a></li>
+                                <li><a href="#advantages-section" class="nav-link">Advantages</a></li>
+                                <li><a href="#review-section" class="nav-link">Review</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div class="ml-auto w-25">
+                        <a href="#" class="d-inline-block d-lg-none site-menu-toggle js-menu-toggle text-black float-right"><span class="icon-menu h3"></span></a>
+                    </div>
+                </div>
+            </div>
+            
+        </header>
+
+        <div class="intro-section" id="home-section">
+            <div class="slide-1">
+                <!-- <div class="slide-1" 
+                style="background-image: url('assets/login/images/new_bg.jpg');" data-stellar-background-ratio="0.5"
+                > -->
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-12">
+                            <div class="row align-items-center">
+                                <!-- <div class="col-lg-6 mb-4">
+                                    <h1 class="t-name" data-aos="fade-up" data-aos-delay="100">SMS </br></h1>
+                                    <p class="mb-4"  data-aos="fade-up" data-aos-delay="200">Statistics</p>
+                                    <p data-aos="fade-up" data-aos-delay="300"></p>
+                                </div> -->
+
+
+                                <div class="col-lg-5 m-auto" data-aos="fade-up" data-aos-delay="500" style="height: 400px;">
+
+                                    <div class="flip-card fixed-top">
+                                        <div class="flip-card-inner">
+                                            <div class="flip-card-front">
+
+                                                <form method="post" action="templates/login.php" class="form-box Card">
+<h3 class="h4 text-white Card__title" style="background-color:#f8951d;">Sign IN</h3>
+<div class="Card__body">
+    <label class="Field">
+        <span class="Field__label" style="opacity: 0.5;">Username</span>
+        <input class="Field__input" type="text" placeholder="Username"  name="username" placeholder="Username" value="" style="color: rgb(51, 51, 51);">
+    </label>
+    <label class="Field">
+        <span class="Field__label" style="opacity: 0.5;">Password</span>
+        <input class="Field__input" type="password" placeholder="Password" name="password" placeholder="Password" value="" style="color: rgb(51, 51, 51);">
+    </label>
+    <div class="row">
+        <div class="col-12 mt-2 pt-3">
+            <div class="row">
+                <div class="col-12 col-sm-6">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="remember_me">
+                        <label class="custom-control-label" for="remember_me">Remember Me</label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 text-left text-sm-right">
+                    <span id="reset_password" class="mt-2" style="cursor: pointer;">Forgot Password</span>
+                </div>
+            </div>
+        </div>                                               
+        <div class="col-12">
+            <div class="" id="flex">
+                <button class="Button" id="signin" style="background-color:#f8951d;">Sign IN</button> 
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+<script type="text/javascript">
+$('#reset_password, #signin').on('click', function(event){
+    event.preventDefault();
+    $("#reset_password, #signin").attr("disabled", true);
+
+    if($(this).attr('id') == 'reset_password') {
+        var data = {
+            command : 'reset_password',
+        };
+    } else {
+        var data = {
+            command :   'signin',
+            username :  $('input[name="username"]').val(),
+            password :  $('input[name="password"]').val(),
+        };
+
+        if($('#login_as_user_operator').prop('checked')) {
+            data.login_as_user_operator = '1';
+        }
+
+        if($('#remember_me').prop('checked')) {
+            data.remember_me = '1';
+        }
+    }
+
+    var form = $(this).closest('form');
+    var url = form.attr('action');
+    var method = form.attr('method');
+    var command = $(this).attr('id');
+
+    $.ajax({
+        method: method,
+        url: url,
+        data: data,
+        success: function(response){
+            process_response(response);
+        },
+        complete: function() {
+            $("#reset_password, #signin").attr("disabled", false);
+        }
+    });
+
+    return false;
+});
+</script>
+                                            </div>
+
+                                            <div class="flip-card-back">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="site-section courses-title" id="courses-section" style="display:none;">
+            <div class="container">
+
+                <div class="row mb-5 justify-content-center">
+    <div class="col-lg-7 text-center" data-aos="fade-up" data-aos-delay="">
+        <h2 class="section-title">Courses</h2>
+    </div>
+</div>
+            </div>
+        </div>
+
+        <div class="site-section" id="advantages-section" style="display:none;">
+            <div class="container">
+
+                <div class="row mb-5 justify-content-center">
+    <div class="col-lg-7 text-center"  data-aos="fade-up" data-aos-delay="">
+        <h2 class="section-title">Our Advantages</h2>
+        <p>SMART SMS offers Excellent SMS service on a state-of-the Art SMS platform, which already
+processed billions of messages and connected to 1000s of applications to faciltate an smooth flow critical SMS to the Public and getting the people Closer & Closer.</p>
+
+<p>The platform is highly secure, scalable and extensible custom features. It provides businesses with a high quality interface to send and receive SMS messages with multilingual (English and Arabic) text with scheduling and long character support. SMART SMS messaging can be easily integrated through a rich set of API (Application Programming Interface) into the enterprise’s back-end infrastructure. SMART SMS is the ideal communication channel to stay connected with your customers, clients creating a real time network of relevant information.</p>
+<h2 class="text-black mb-4">Our Services<br></h2>
+<p>Bulk SMS<br>
+Database Marketing<br>
+Two-way SMS system<br>
+Premium Short Code Service<br>
+SMS Raffle</p>
+    </div>
+</div>
+
+
+<div class="row mb-5 align-items-center">
+    <div class="col-lg-4 mb-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-center">
+            <img src="assets/login/images/step1.png" alt="Image" class="img-fluid">
+        </div>
+    </div>
+    <div class="col-lg-8 ml-auto" data-aos="fade-up" data-aos-delay="200">
+        <h2 class="text-black mb-4">Different SMS Type</h2>
+        <p class="mb-4">Bulk/A2P SMS, 2 Way SMS, Transactional SMS, SMS Raffle </p>
+    </div>
+</div>
+
+<div class="row mb-5 align-items-center">
+    <div class="col-lg-4 mb-3 order-1 order-lg-2" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-center">
+            <img src="assets/login/images/step2.png" alt="Image" class="img-fluid">
+        </div>
+    </div>
+    <div class="col-lg-8 mr-auto order-2 order-lg-1" data-aos="fade-up" data-aos-delay="200">
+        <h2 class="text-black mb-4">Contact Groups & List</h2>
+        <p class="mb-4">Save frequently used contact list as a group. You can add and remove contacts inside groups as needed.</p>
+    </div>
+</div>
+
+
+<div class="row mb-5 align-items-center">
+    <div class="col-lg-4 mb-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-center">
+            <img src="assets/login/images/step3.png" alt="Image" class="img-fluid">
+        </div>
+    </div>
+    <div class="col-lg-8 ml-auto" data-aos="fade-up" data-aos-delay="200">
+        <h2 class="text-black mb-4">Low prices</h2>
+        <p class="mb-4">SMART SMS is always delivered at competitive prices.</p>
+    </div>
+</div>
+
+<div class="row mb-5 align-items-center">
+    <div class="col-lg-4 mb-3 order-1 order-lg-2" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-center">
+            <img src="assets/login/images/step4.png" alt="Image" class="img-fluid">
+        </div>
+    </div>
+    <div class="col-lg-8 mr-auto order-2 order-lg-1" data-aos="fade-up" data-aos-delay="200">
+        <h2 class="text-black mb-4">Bulk SMS</h2>
+        <p class="mb-4">Our bulk SMS Service delivers text messages directly to mobile subscriber's handsets. By using SMART SMS, customers get the best possible quality SMS on the market and have the peace of mind that every SMS sent will be delivered in a secure manner and at the right time.</p>
+    </div>
+</div>
+            </div>
+        </div>
+
+        <div class="site-section" id="review-section" style="display:none;">
+            <div class="container">
+
+                
+<div class="row mb-5 justify-content-center">
+    <div class="col-lg-7 mb-5 text-center"  data-aos="fade-up" data-aos-delay="">
+        <h2 class="section-title">Review</h2>
+        <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam repellat aut neque! Doloribus sunt non aut reiciendis, vel recusandae obcaecati hic dicta repudiandae in quas quibusdam ullam, illum sed veniam!</p>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="teacher text-center">
+            <div class="py-2">
+                <h3 class="text-black">Alexandr Pasichkin</h3>
+                <p class="position">Developer</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro eius suscipit delectus enim iusto tempora, adipisci at provident.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="teacher text-center">
+            <div class="py-2">
+                <h3 class="text-black">Miranda Weasley</h3>
+                <p class="position">Senior Developer</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro eius suscipit delectus enim iusto tempora, adipisci at provident.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="teacher text-center">
+            <div class="py-2">
+                <h3 class="text-black">Bob Marley</h3>
+                <p class="position">Manager</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro eius suscipit delectus enim iusto tempora, adipisci at provident.</p>
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    
+        <!-- <footer class="bg-white">
+            <div class="container">
+                <div class="row pt-5 mt-5 text-center">
+                    <div class="col-md-12">
+                        <div class="border-top pt-5">
+                            <p>
+                                © Smart SMS. All Rights Reserved
+
+                            </p>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </footer> -->
+    </div> <!-- .site-wrap -->
+
+    <script type="text/javascript">
+
+        $('.flip-card-inner').on('click', '#show_login', function(event) {
+            event.preventDefault($(this).attr('id'));
+            $("#show_login").attr("disabled", true);
+
+            var form = $(this).closest('form');
+            var url = form.attr('action');
+            var method = form.attr('method');
+            var command = $(this).attr('id');
+
+            $.ajax({
+                method: method,
+                url: url,
+                data: {command : command},
+                success: function(response){
+                    process_response(response);
+                },
+                complete: function() {
+                    $('#show_login').attr("disabled", false);
+                }
+            });
+            return false;
+        });
+
+        function flip(response) {
+            if($('.flip-card-inner').hasClass('rotated')) {
+                $('.flip-card-inner').removeClass('rotated');
+                $('.flip-card-inner').css('transform','rotateY(0deg)');
+                var front = $('.flip-card-back');
+                var back = $('.flip-card-front');
+            } else {
+                $('.flip-card-inner').addClass('rotated');
+                $('.flip-card-inner').css('transform','rotateY(180deg)');
+                var back = $('.flip-card-back');
+                var front = $('.flip-card-front');
+            }
+
+            $(back).html(response);
+            setTimeout(function() {
+                $(front).html('');
+            }, 400);
+        }
+
+        function process_response(response) {
+            var data = JSON.parse(response);
+            if (typeof data === 'undefined' || !('result' in data)) {
+                flip(create_message('Oops!', 'Undefined Response'));
+                return false;
+            }
+
+            if(!data.result) {
+                flip(create_message('Oops!', data.msg));
+                return false;
+            } else {
+                if(typeof data.html !== 'undefined') {
+                    flip(data.html);
+                } else {
+                    if(typeof data.auth !== 'undefined') {
+                        window.location.replace(window.location);
+                    } else {
+                        flip(create_message('Ok!', data.msg));
+                    }
+
+                }
+            }
+
+
+
+
+            return true;
+        }
+
+        function create_message(head, text) {
+            return '' +
+                '<form method="post" action="templates/login.php" class="form-box Card_error">' +
+                '   <div id="error">' +
+                '       <div class="error">' +
+                '           <div class="err-text">' +
+                '               <h1>' + head + '</h1>' +
+                '               <h2>' + text + '</h2>' +
+                '           </div>' +
+                '           <button class="Button d-inline" id="show_login">Back</button> ' +
+                '       </div>' +
+                '   </div>' +
+                '</fomr>';
+        }
+    </script>
+
+    <script src="assets/login/js/bootstrap.min.js"></script>
+    <script src="assets/login/js/owl.carousel.min.js"></script>
+    <script src="assets/login/js/jquery.stellar.min.js"></script>
+    <script src="assets/login/js/jquery.countdown.min.js"></script>
+    <script src="assets/login/js/jquery.easing.1.3.js"></script>
+    <script src="assets/login/js/aos.js"></script>
+    <script src="assets/login/js/jquery.sticky.js"></script>
+    <script src="assets/login/js/main.js"></script>
+    </body>
+</html>
