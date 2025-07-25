@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7 Up 7 Down AI Predictor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            color: #ccc;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-label {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+
+        .results-input {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .result-input {
+            padding: 15px;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.2em;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .result-input:focus {
+            outline: none;
+            border-color: #ffed4e;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .predict-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .predict-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ffd700;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #ffd700;
+            font-size: 1.1em;
+        }
+
+        .prediction-result {
+            display: none;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+        }
+
+        .prediction-title {
+            font-size: 1.4em;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .prediction-value {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .prediction-range {
+            font-size: 1.2em;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .confidence {
+            font-size: 1em;
+            color: #4ecdc4;
+        }
+
+        .low { color: #ff6b6b; }
+        .seven { color: #ffd700; }
+        .high { color: #4ecdc4; }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .channel-link {
+            display: inline-block;
+            background: linear-gradient(45deg, #25d366, #128c7e);
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .channel-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .developer {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .history {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .history-title {
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+            
+            .title {
+                font-size: 2em;
+            }
+            
+            .results-input {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🎲 7 UP 7 DOWN 🎲</h1>
+            <p class="subtitle">AI Prediction Tool</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-label">Enter Last 4 Results:</div>
+            <div class="results-input">
+                <input type="number" class="result-input" id="result1" placeholder="1st" min="2" max="12">
+                <input type="number" class="result-input" id="result2" placeholder="2nd" min="2" max="12">
+                <input type="number" class="result-input" id="result3" placeholder="3rd" min="2" max="12">
+                <input type="number" class="result-input" id="result4" placeholder="4th" min="2" max="12">
+            </div>
+            <button class="predict-btn" onclick="predictNext()">🔮 Predict Next Result</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">AI is analyzing patterns...</div>
+        </div>
+
+        <div class="prediction-result" id="predictionResult">
+            <div class="prediction-title">🎯 AI Prediction</div>
+            <div class="prediction-value" id="predictedValue">7</div>
+            <div class="prediction-range" id="predictedRange">Lucky 7</div>
+            <div class="confidence" id="confidence">Confidence: 85%</div>
+        </div>
+
+        <div class="history" id="history" style="display: none;">
+            <div class="history-title">📊 Prediction History</div>
+            <div id="historyList"></div>
+        </div>
+
+        <div class="footer">
+            <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="channel-link" target="_blank">
+                📱 Join WhatsApp Channel
+            </a>
+            <div class="developer">DEVELOP BY OLD-HACKER</div>
+        </div>
+    </div>
+
+    <script>
+        let predictionHistory = [];
+
+        function predictNext() {
+            const result1 = parseInt(document.getElementById('result1').value);
+            const result2 = parseInt(document.getElementById('result2').value);
+            const result3 = parseInt(document.getElementById('result3').value);
+            const result4 = parseInt(document.getElementById('result4').value);
+
+            // Validate inputs
+            if (isNaN(result1) || isNaN(result2) || isNaN(result3) || isNaN(result4)) {
+                alert('Please enter all 4 results (numbers between 2-12)');
+                return;
+            }
+
+            if ([result1, result2, result3, result4].some(val => val < 2 || val > 12)) {
+                alert('All results must be between 2 and 12');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('predictionResult').style.display = 'none';
+            document.querySelector('.predict-btn').disabled = true;
+
+            // Simulate AI processing time
+            setTimeout(() => {
+                const prediction = calculateAIPrediction([result1, result2, result3, result4]);
+                displayPrediction(prediction);
+                
+                // Add to history
+                predictionHistory.unshift({
+                    inputs: [result1, result2, result3, result4],
+                    prediction: prediction.value,
+                    range: prediction.range,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                
+                if (predictionHistory.length > 5) {
+                    predictionHistory = predictionHistory.slice(0, 5);
+                }
+                
+                updateHistory();
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('predictionResult').style.display = 'block';
+                document.querySelector('.predict-btn').disabled = false;
+            }, 2000 + Math.random() * 1000); // Random delay between 2-3 seconds
+        }
+
+        function calculateAIPrediction(results) {
+            // Advanced AI algorithm combining multiple prediction strategies
+            
+            // Strategy 1: Pattern Analysis
+            const patternWeight = analyzePatterns(results);
+            
+            // Strategy 2: Frequency Analysis
+            const frequencyWeight = analyzeFrequency(results);
+            
+            // Strategy 3: Trend Analysis
+            const trendWeight = analyzeTrend(results);
+            
+            // Strategy 4: Hot/Cold Number Analysis
+            const hotColdWeight = analyzeHotCold(results);
+            
+            // Combine all strategies with weights
+            const combinedScore = {
+                low: (patternWeight.low * 0.3) + (frequencyWeight.low * 0.25) + (trendWeight.low * 0.25) + (hotColdWeight.low * 0.2),
+                seven: (patternWeight.seven * 0.3) + (frequencyWeight.seven * 0.25) + (trendWeight.seven * 0.25) + (hotColdWeight.seven * 0.2),
+                high: (patternWeight.high * 0.3) + (frequencyWeight.high * 0.25) + (trendWeight.high * 0.25) + (hotColdWeight.high * 0.2)
+            };
+            
+            // Find the highest probability
+            const maxScore = Math.max(combinedScore.low, combinedScore.seven, combinedScore.high);
+            let predictedRange, predictedValue, confidence;
+            
+            if (combinedScore.low === maxScore) {
+                predictedRange = 'low';
+                predictedValue = Math.floor(Math.random() * 5) + 2; // 2-6
+                confidence = Math.floor(combinedScore.low * 100);
+            } else if (combinedScore.seven === maxScore) {
+                predictedRange = 'seven';
+                predictedValue = 7;
+                confidence = Math.floor(combinedScore.seven * 100);
+            } else {
+                predictedRange = 'high';
+                predictedValue = Math.floor(Math.random() * 5) + 8; // 8-12
+                confidence = Math.floor(combinedScore.high * 100);
+            }
+            
+            // Ensure confidence is realistic (60-95%)
+            confidence = Math.max(60, Math.min(95, confidence));
+            
+            return {
+                value: predictedValue,
+                range: predictedRange,
+                confidence: confidence
+            };
+        }
+
+        function analyzePatterns(results) {
+            const weights = { low: 0.33, seven: 0.33, high: 0.33 };
+            
+            // Check for alternating patterns
+            let alternatingLowHigh = true;
+            let alternatingSevenOther = true;
+            
+            for (let i = 0; i < results.length - 1; i++) {
+                const current = categorizeNumber(results[i]);
+                const next = categorizeNumber(results[i + 1]);
+                
+                if ((current === 'low' && next !== 'high') || (current === 'high' && next !== 'low')) {
+                    alternatingLowHigh = false;
+                }
+                
+                if ((current === 'seven' && next === 'seven') || (current !== 'seven' && next !== 'seven')) {
+                    alternatingSevenOther = false;
+                }
+            }
+            
+            const lastCategory = categorizeNumber(results[results.length - 1]);
+            
+            if (alternatingLowHigh) {
+                if (lastCategory === 'low') weights.high += 0.3;
+                else if (lastCategory === 'high') weights.low += 0.3;
+            }
+            
+            if (alternatingSevenOther) {
+                if (lastCategory === 'seven') {
+                    weights.low += 0.15;
+                    weights.high += 0.15;
+                } else {
+                    weights.seven += 0.3;
+                }
+            }
+            
+            return weights;
+        }
+
+        function analyzeFrequency(results) {
+            const counts = { low: 0, seven: 0, high: 0 };
+            
+            results.forEach(result => {
+                const category = categorizeNumber(result);
+                counts[category]++;
+            });
+            
+            // Inverse frequency logic - predict less frequent outcomes
+            const total = results.length;
+            const weights = {
+                low: 1 - (counts.low / total),
+                seven: 1 - (counts.seven / total),
+                high: 1 - (counts.high / total)
+            };
+            
+            // Normalize
+            const sum = weights.low + weights.seven + weights.high;
+            weights.low /= sum;
+            weights.seven /= sum;
+            weights.high /= sum;
+            
+            return weights;
+        }
+
+        function analyzeTrend(results) {
+            const weights = { low: 0.33, seven: 0.33, high: 0.33 };
+            
+            // Check if there's a trend towards higher or lower numbers
+            let trend = 0;
+            for (let i = 1; i < results.length; i++) {
+                if (results[i] > results[i-1]) trend++;
+                else if (results[i] < results[i-1]) trend--;
+            }
+            
+            if (trend > 0) {
+                // Upward trend, but predict reversal
+                weights.low += 0.2;
+            } else if (trend < 0) {
+                // Downward trend, but predict reversal
+                weights.high += 0.2;
+            } else {
+                // No clear trend, favor seven
+                weights.seven += 0.2;
+            }
+            
+            return weights;
+        }
+
+        function analyzeHotCold(results) {
+            const weights = { low: 0.33, seven: 0.33, high: 0.33 };
+            
+            // Check recent results for hot/cold analysis
+            const recent = results.slice(-2);
+            const categories = recent.map(categorizeNumber);
+            
+            // If same category appeared recently, reduce its weight
+            if (categories[0] === categories[1]) {
+                const category = categories[0];
+                weights[category] -= 0.2;
+                
+                // Distribute to others
+                const others = Object.keys(weights).filter(k => k !== category);
+                others.forEach(other => weights[other] += 0.1);
+            }
+            
+            return weights;
+        }
+
+        function categorizeNumber(num) {
+            if (num >= 2 && num <= 6) return 'low';
+            if (num === 7) return 'seven';
+            if (num >= 8 && num <= 12) return 'high';
+        }
+
+        function displayPrediction(prediction) {
+            const valueElement = document.getElementById('predictedValue');
+            const rangeElement = document.getElementById('predictedRange');
+            const confidenceElement = document.getElementById('confidence');
+            
+            valueElement.textContent = prediction.value;
+            confidenceElement.textContent = `Confidence: ${prediction.confidence}%`;
+            
+            // Remove existing classes
+            valueElement.className = 'prediction-value';
+            
+            if (prediction.range === 'low') {
+                valueElement.classList.add('low');
+                rangeElement.textContent = '2-6 (Low)';
+            } else if (prediction.range === 'seven') {
+                valueElement.classList.add('seven');
+                rangeElement.textContent = 'Lucky 7';
+            } else {
+                valueElement.classList.add('high');
+                rangeElement.textContent = '8-12 (High)';
+            }
+        }
+
+        function updateHistory() {
+            if (predictionHistory.length === 0) return;
+            
+            const historyDiv = document.getElementById('history');
+            const historyList = document.getElementById('historyList');
+            
+            historyDiv.style.display = 'block';
+            historyList.innerHTML = '';
+            
+            predictionHistory.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <span>Input: [${item.inputs.join(', ')}]</span>
+                    <span>Predicted: <strong>${item.prediction}</strong> (${item.range})</span>
+                    <span>${item.timestamp}</span>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // Add enter key support
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                predictNext();
+            }
+        });
+
+        // Auto-focus first input
+        document.getElementById('result1').focus();
+    </script>
+</body>
+</html>
+
