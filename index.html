@@ -249,10 +249,10 @@
         <div class="input-section">
             <div class="input-label">Enter Last 4 Results:</div>
             <div class="results-input">
-                <input type="number" class="result-input" id="result1" placeholder="1st" min="2" max="12">
-                <input type="number" class="result-input" id="result2" placeholder="2nd" min="2" max="12">
-                <input type="number" class="result-input" id="result3" placeholder="3rd" min="2" max="12">
-                <input type="number" class="result-input" id="result4" placeholder="4th" min="2" max="12">
+                <input type="number" class="result-input" id="result1" placeholder="1st" min="2" max="12" oninput="moveToNext(this, 'result2')" maxlength="2">
+                <input type="number" class="result-input" id="result2" placeholder="2nd" min="2" max="12" oninput="moveToNext(this, 'result3')" maxlength="2">
+                <input type="number" class="result-input" id="result3" placeholder="3rd" min="2" max="12" oninput="moveToNext(this, 'result4')" maxlength="2">
+                <input type="number" class="result-input" id="result4" placeholder="4th" min="2" max="12" maxlength="2">
             </div>
             <button class="predict-btn" onclick="predictNext()">🔮 Predict Next Result</button>
         </div>
@@ -548,8 +548,16 @@
         });
 
         // Auto-focus first input
-        document.getElementById('result1').focus();
+        document.getElementById("result1").focus();
+
+        function moveToNext(currentInput, nextInputId) {
+            if (currentInput.value.length === currentInput.maxLength || (currentInput.value >= 2 && currentInput.value <= 12)) {
+                const nextInput = document.getElementById(nextInputId);
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+        }
     </script>
 </body>
 </html>
-
