@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teen Black Hat Store</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🎩</span>
+                <span class="logo-text">Teen Black Hat Store</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" onclick="showSection('home')">Home</a></li>
+                <li><a href="#products" onclick="showSection('products')">Products</a></li>
+                <li><a href="#contact" onclick="showSection('contact')">Contact</a></li>
+                <li><a href="#admin" onclick="showSection('admin')">Admin</a></li>
+                <li class="cart-item">
+                    <a href="#cart" onclick="showSection('cart')">
+                        🛒 <span id="cart-count">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="section active">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Welcome to Teen Black Hat Store</h1>
+                <p>Your one-stop shop for premium digital products and services</p>
+                
+                <div class="payment-methods">
+                    <h3>💳 Easy Payment Methods</h3>
+                    <p>We accept JazzCash, EasyPaisa, and SadaPay for quick and secure payments</p>
+                    <div class="payment-buttons">
+                        <span class="payment-btn">JazzCash</span>
+                        <span class="payment-btn">EasyPaisa</span>
+                        <span class="payment-btn">SadaPay</span>
+                    </div>
+                </div>
+                
+                <button class="cta-button" onclick="showSection('products')">Shop Now</button>
+            </div>
+        </div>
+        
+        <div class="products-preview">
+            <h2>Our Products</h2>
+            <div id="home-products" class="products-grid">
+                <!-- Products will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="section">
+        <div class="container">
+            <h2>All Products</h2>
+            <div id="products-grid" class="products-grid">
+                <!-- Products will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Section -->
+    <section id="cart" class="section">
+        <div class="container">
+            <h2>Shopping Cart</h2>
+            <div id="cart-items" class="cart-items">
+                <!-- Cart items will be loaded here -->
+            </div>
+            <div id="cart-total" class="cart-total">
+                <h3>Total: Rs. <span id="total-amount">0</span></h3>
+                <button id="checkout-btn" class="checkout-button" onclick="showSection('checkout')">Proceed to Checkout</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Checkout Section -->
+    <section id="checkout" class="section">
+        <div class="container">
+            <h2>Checkout</h2>
+            <div class="checkout-content">
+                <div class="payment-info">
+                    <h3>Payment Instructions</h3>
+                    <div class="payment-details">
+                        <p><strong>Item Price:</strong> Rs. <span id="checkout-total">0</span></p>
+                        <p><strong>Send payment to this account:</strong></p>
+                        <p class="account-number">03276349673</p>
+                        <div class="payment-methods-checkout">
+                            <span class="payment-method">JazzCash</span>
+                            <span class="payment-method">EasyPaisa</span>
+                            <span class="payment-method">SadaPay</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="customer-form">
+                    <h3>Enter Your Details</h3>
+                    <form id="checkout-form">
+                        <div class="form-group">
+                            <label for="transaction-id">Transaction ID:</label>
+                            <input type="text" id="transaction-id" name="transactionId" required 
+                                   placeholder="Enter your transaction ID">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="customer-name">Your Name:</label>
+                            <input type="text" id="customer-name" name="customerName" required 
+                                   placeholder="Enter your full name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="whatsapp-number">WhatsApp Number:</label>
+                            <input type="tel" id="whatsapp-number" name="whatsappNumber" required 
+                                   placeholder="+92xxxxxxxxxx">
+                        </div>
+                        
+                        <button type="submit" class="confirm-order-btn">Confirm Order</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Confirmation Section -->
+    <section id="order-confirmation" class="section">
+        <div class="container">
+            <div class="confirmation-content">
+                <h2>✅ Order Confirmed!</h2>
+                <div id="order-details" class="order-details">
+                    <!-- Order details will be populated here -->
+                </div>
+                <p class="confirmation-message">
+                    Thank you for your order! We will contact you on WhatsApp to complete the process.
+                </p>
+                <button onclick="showSection('home')" class="back-home-btn">Back to Home</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">📱</div>
+                    <h3>Telegram</h3>
+                    <p>For deposits and support</p>
+                    <a href="https://t.me/your_telegram_username" target="_blank">@your_telegram_username</a>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">💬</div>
+                    <h3>WhatsApp</h3>
+                    <p>For order completion</p>
+                    <a href="https://wa.me/1234567890" target="_blank">+1234567890</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Section -->
+    <section id="admin" class="section">
+        <div class="container">
+            <!-- Admin Login Form -->
+            <div id="admin-login" class="admin-login">
+                <h2>Admin Login</h2>
+                <form id="admin-login-form" class="login-form">
+                    <div class="form-group">
+                        <label for="admin-username">Username:</label>
+                        <input type="text" id="admin-username" name="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-password">Password:</label>
+                        <input type="password" id="admin-password" name="password" required>
+                    </div>
+                    
+                    <button type="submit" class="login-btn">Login</button>
+                    <div id="login-error" class="error-message"></div>
+                </form>
+            </div>
+
+            <!-- Admin Panel (Hidden by default) -->
+            <div id="admin-panel" class="admin-panel" style="display: none;">
+                <div class="admin-header">
+                    <h2>Admin Panel</h2>
+                    <button onclick="adminLogout()" class="logout-btn">Logout</button>
+                </div>
+                
+                <div class="admin-tabs">
+                    <button class="tab-btn active" onclick="showAdminTab('orders')">Orders</button>
+                    <button class="tab-btn" onclick="showAdminTab('products')">Products</button>
+                </div>
+                
+                <!-- Orders Tab -->
+                <div id="admin-orders" class="admin-tab active">
+                    <div class="orders-header">
+                        <h3>Orders Management</h3>
+                        <div class="orders-stats">
+                            <span class="stat">Total Orders: <span id="total-orders">0</span></span>
+                            <span class="stat">Pending: <span id="pending-orders">0</span></span>
+                        </div>
+                    </div>
+                    
+                    <div class="orders-actions">
+                        <button onclick="viewAllOrders()" class="action-btn">View All Orders</button>
+                        <button onclick="clearAllOrders()" class="action-btn danger">Clear All Orders</button>
+                    </div>
+                    
+                    <div id="orders-list" class="orders-list">
+                        <!-- Orders will be displayed here -->
+                    </div>
+                </div>
+                
+                <!-- Products Tab -->
+                <div id="admin-products" class="admin-tab">
+                    <div class="products-header">
+                        <h3>Products Management</h3>
+                        <button onclick="showAddProductForm()" class="action-btn">Add New Product</button>
+                    </div>
+                    
+                    <!-- Add Product Form -->
+                    <div id="add-product-form" class="add-product-form" style="display: none;">
+                        <h4>Add New Product</h4>
+                        <form id="product-form">
+                            <div class="form-group">
+                                <label for="product-name">Product Name:</label>
+                                <input type="text" id="product-name" name="productName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="product-description">Description:</label>
+                                <textarea id="product-description" name="productDescription" required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="product-image">Image URL:</label>
+                                <input type="url" id="product-image" name="productImage" required>
+                            </div>
+                            
+                            <div class="form-buttons">
+                                <button type="submit" class="action-btn">Add Product</button>
+                                <button type="button" onclick="hideAddProductForm()" class="action-btn secondary">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div id="admin-products-list" class="admin-products-list">
+                        <!-- Products will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Teen Black Hat Store. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
