@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Code Encryptor - OLD-STUDIO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .code-input {
+            width: 100%;
+            min-height: 300px;
+            padding: 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .code-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .button-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .btn-decrypt {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .btn-decrypt:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #28a745;
+            color: white;
+            flex: 1;
+            min-width: 180px;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .btn-secondary.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .btn-secondary:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .output-section {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .output-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .output-area {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            background: #f8f9fa;
+            color: #333;
+            resize: vertical;
+            word-break: break-all;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .whatsapp-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #25d366;
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-link:hover {
+            background: #128c7e;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .button-section {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">HTML CODE ENCRYPTOR</h1>
+            <p class="subtitle">Base64 Encryption Tool</p>
+        </div>
+
+        <div class="input-section">
+            <label class="input-label">ENTER YOUR CODE HERE</label>
+            <textarea 
+                id="codeInput" 
+                class="code-input" 
+                placeholder="Paste your HTML, CSS, JavaScript or any code here..."
+                spellcheck="false"
+            ></textarea>
+        </div>
+
+        <div class="button-section">
+            <button id="encryptBtn" class="btn btn-primary">
+                START ENCRYPTION
+            </button>
+            <button id="decryptBtn" class="btn btn-decrypt">
+                START DECRYPTION
+            </button>
+            <button id="downloadBtn" class="btn btn-secondary">
+                DOWNLOAD YOUR CODE
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Encrypting your code...</p>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            ✅ Code encrypted successfully! You can now download your encrypted file.
+        </div>
+
+        <div class="output-section" id="outputSection">
+            <label class="output-label">ENCRYPTED CODE (Base64)</label>
+            <textarea 
+                id="encryptedOutput" 
+                class="output-area" 
+                readonly
+                placeholder="Your encrypted code will appear here..."
+            ></textarea>
+        </div>
+
+        <div class="footer">
+            <div class="brand">POWERED BY OLD-STUDIO</div>
+            <a href="https://whatsapp.com/channel/0029VbAtNf6Likg7MJqCkp2d" 
+               class="whatsapp-link" 
+               target="_blank">
+                📱 JOIN WHATSAPP CHANNEL
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let encryptedCode = '';
+        let decryptedCode = '';
+        
+        // DOM elements
+        const codeInput = document.getElementById('codeInput');
+        const encryptBtn = document.getElementById('encryptBtn');
+        const decryptBtn = document.getElementById('decryptBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const loading = document.getElementById('loading');
+        const successMessage = document.getElementById('successMessage');
+        const outputSection = document.getElementById('outputSection');
+        const encryptedOutput = document.getElementById('encryptedOutput');
+
+        // Base64 encoding function
+        function encodeToBase64(str) {
+            try {
+                // Convert string to base64
+                return btoa(unescape(encodeURIComponent(str)));
+            } catch (error) {
+                console.error('Encoding error:', error);
+                return null;
+            }
+        }
+
+        // Base64 decoding function
+        function decodeFromBase64(str) {
+            try {
+                // Convert base64 to string
+                return decodeURIComponent(escape(atob(str)));
+            } catch (error) {
+                console.error('Decoding error:', error);
+                return null;
+            }
+        }
+
+        // Encrypt function
+        function encryptCode() {
+            const code = codeInput.value.trim();
+            
+            if (!code) {
+                alert('Please enter some code to encrypt!');
+                return;
+            }
+
+            // Show loading
+            loading.style.display = 'block';
+            encryptBtn.disabled = true;
+            
+            // Simulate processing time for better UX
+            setTimeout(() => {
+                // Encode to base64
+                encryptedCode = encodeToBase64(code);
+                
+                if (encryptedCode) {
+                    // Show encrypted output
+                    encryptedOutput.value = encryptedCode;
+                    outputSection.style.display = 'block';
+                    
+                    // Show success message
+                    successMessage.style.display = 'block';
+                    
+                    // Enable download button
+                    downloadBtn.classList.add('active');
+                    
+                    // Scroll to output
+                    outputSection.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('Error encrypting code. Please try again.');
+                }
+                
+                // Hide loading
+                loading.style.display = 'none';
+                encryptBtn.disabled = false;
+            }, 1500);
+        }
+
+        // Decrypt function
+        function decryptCode() {
+            const code = codeInput.value.trim();
+            
+            if (!code) {
+                alert('Please enter some Base64 encrypted code to decrypt!');
+                return;
+            }
+
+            // Show loading
+            loading.style.display = 'block';
+            decryptBtn.disabled = true;
+            
+            // Simulate processing time for better UX
+            setTimeout(() => {
+                // Decode from base64
+                decryptedCode = decodeFromBase64(code);
+                
+                if (decryptedCode) {
+                    // Show decrypted output
+                    encryptedOutput.value = decryptedCode;
+                    outputSection.style.display = 'block';
+                    
+                    // Update label for decrypted output
+                    document.querySelector('.output-label').textContent = 'DECRYPTED CODE (Original)';
+                    
+                    // Show success message
+                    successMessage.innerHTML = '✅ Code decrypted successfully! You can now download your original code.';
+                    successMessage.style.display = 'block';
+                    
+                    // Enable download button
+                    downloadBtn.classList.add('active');
+                    
+                    // Update global variable for download
+                    encryptedCode = decryptedCode;
+                    
+                    // Scroll to output
+                    outputSection.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('Error decrypting code. Please make sure you entered valid Base64 encrypted code.');
+                }
+                
+                // Hide loading
+                loading.style.display = 'none';
+                decryptBtn.disabled = false;
+            }, 1500);
+        }
+
+        // Download function
+        function downloadEncryptedCode() {
+            if (!encryptedCode) {
+                alert('Please encrypt some code first!');
+                return;
+            }
+
+            // Create download blob
+            const blob = new Blob([encryptedCode], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            
+            // Create download link
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'encrypted_code.txt';
+            document.body.appendChild(a);
+            a.click();
+            
+            // Cleanup
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Event listeners
+        encryptBtn.addEventListener('click', encryptCode);
+        downloadBtn.addEventListener('click', downloadEncryptedCode);
+
+        // Auto-resize textarea
+        codeInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.max(300, this.scrollHeight) + 'px';
+        });
+
+        // Copy to clipboard functionality for output
+        encryptedOutput.addEventListener('click', function() {
+            if (this.value) {
+                this.select();
+                document.execCommand('copy');
+                
+                // Show temporary feedback
+                const originalPlaceholder = this.placeholder;
+                this.placeholder = 'Copied to clipboard!';
+                setTimeout(() => {
+                    this.placeholder = originalPlaceholder;
+                }, 2000);
+            }
+        });
+
+        // Enter key support for encryption
+        codeInput.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                encryptCode();
+            }
+        });
+    </script>
+</body>
+</html>
+
