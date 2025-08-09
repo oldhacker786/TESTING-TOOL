@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Platform Social Media Downloader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .platform-section {
+            margin-bottom: 30px;
+        }
+
+        .platform-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .platform-btn {
+            padding: 15px 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .platform-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .platform-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .platform-icon {
+            font-size: 1.5rem;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            display: none;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-section.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .result-section.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .download-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .download-link:hover {
+            background: #218838;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            margin: 10px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .platform-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">AK Multi Downloader</h1>
+            <p class="subtitle">Download videos and content from multiple social media platforms</p>
+        </div>
+
+        <div class="input-section">
+            <input type="text" class="url-input" id="videoUrl" placeholder="Paste your video link here..." />
+        </div>
+
+        <div class="platform-section">
+            <h3 class="platform-title">Select Social Media Platform</h3>
+            <div class="platform-grid">
+                <div class="platform-btn" data-platform="facebook">
+                    <div class="platform-icon">📘</div>
+                    <div>Facebook</div>
+                </div>
+                <div class="platform-btn" data-platform="tiktok">
+                    <div class="platform-icon">🎵</div>
+                    <div>TikTok</div>
+                </div>
+                <div class="platform-btn" data-platform="instagram">
+                    <div class="platform-icon">📷</div>
+                    <div>Instagram</div>
+                </div>
+                <div class="platform-btn" data-platform="pinterest">
+                    <div class="platform-icon">📌</div>
+                    <div>Pinterest</div>
+                </div>
+                <div class="platform-btn" data-platform="spotify">
+                    <div class="platform-icon">🎧</div>
+                    <div>Spotify</div>
+                </div>
+                <div class="platform-btn" data-platform="telegram">
+                    <div class="platform-icon">✈️</div>
+                    <div>Telegram Story</div>
+                </div>
+                <div class="platform-btn" data-platform="twitter">
+                    <div class="platform-icon">🐦</div>
+                    <div>Twitter</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="download-btn" id="downloadBtn" disabled>Download Content</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing your request...</p>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div id="resultMessage"></div>
+        </div>
+
+        <div class="footer">
+            <p><strong>POWERED BY OLD-STUDIO</strong></p>
+            <p>Follow on WhatsApp: <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank">Join Channel</a></p>
+        </div>
+    </div>
+
+    <script>
+        // API endpoints for different platforms
+        const API_ENDPOINTS = {
+            facebook: 'https://fb-down.apis-bj-devs.workers.dev/',
+            instagram: 'https://insta-down.apis-bj-devs.workers.dev/',
+            tiktok: 'https://tiktok-down.apis-bj-devs.workers.dev/',
+            pinterest: 'https://pinterest-down.apis-bj-devs.workers.dev/',
+            twitter: 'https://twitter-down.apis-bj-devs.workers.dev/',
+            spotify: 'https://spotify-down.apis-bj-devs.workers.dev/',
+            telegram: 'https://tgstory-down.apis-bj-devs.workers.dev/'
+        };
+
+        let selectedPlatform = null;
+
+        // DOM elements
+        const platformBtns = document.querySelectorAll('.platform-btn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const urlInput = document.getElementById('videoUrl');
+        const loading = document.getElementById('loading');
+        const resultSection = document.getElementById('resultSection');
+        const resultMessage = document.getElementById('resultMessage');
+
+        // Platform selection
+        platformBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                platformBtns.forEach(b => b.classList.remove('active'));
+                
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                // Set selected platform
+                selectedPlatform = btn.dataset.platform;
+                
+                // Enable download button if URL is provided
+                updateDownloadButton();
+            });
+        });
+
+        // URL input validation
+        urlInput.addEventListener('input', updateDownloadButton);
+
+        function updateDownloadButton() {
+            const hasUrl = urlInput.value.trim().length > 0;
+            const hasPlatform = selectedPlatform !== null;
+            
+            downloadBtn.disabled = !(hasUrl && hasPlatform);
+        }
+
+        // Download functionality
+        downloadBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+            
+            if (!url || !selectedPlatform) {
+                showResult('Please enter a URL and select a platform.', 'error');
+                return;
+            }
+
+            // Show loading
+            loading.classList.add('show');
+            resultSection.classList.remove('show');
+            downloadBtn.disabled = true;
+
+            try {
+                const apiUrl = `${API_ENDPOINTS[selectedPlatform]}?url=${encodeURIComponent(url)}`;
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (response.ok && data.success !== false) {
+                    // Handle successful response
+                    let message = `✅ Content processed successfully!`;
+                    
+                    if (data.download_url || data.url || data.downloadUrl) {
+                        const downloadUrl = data.download_url || data.url || data.downloadUrl;
+                        message += `<br><a href="${downloadUrl}" class="download-link" target="_blank" download>Download File</a>`;
+                    } else if (data.video_url || data.audio_url) {
+                        message += `<br>`;
+                        if (data.video_url) {
+                            message += `<a href="${data.video_url}" class="download-link" target="_blank" download>Download Video</a> `;
+                        }
+                        if (data.audio_url) {
+                            message += `<a href="${data.audio_url}" class="download-link" target="_blank" download>Download Audio</a>`;
+                        }
+                    } else {
+                        message += `<br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    }
+                    
+                    showResult(message, 'success');
+                } else {
+                    // Handle API error
+                    const errorMsg = data.message || data.error || 'Failed to process the URL. Please check the URL and try again.';
+                    showResult(`❌ ${errorMsg}`, 'error');
+                }
+            } catch (error) {
+                console.error('Download error:', error);
+                showResult(`❌ Network error: ${error.message}. Please check your internet connection and try again.`, 'error');
+            } finally {
+                // Hide loading
+                loading.classList.remove('show');
+                downloadBtn.disabled = false;
+                updateDownloadButton();
+            }
+        });
+
+        function showResult(message, type) {
+            resultMessage.innerHTML = message;
+            resultSection.className = `result-section show ${type}`;
+        }
+
+        // Auto-detect platform from URL
+        urlInput.addEventListener('input', () => {
+            const url = urlInput.value.trim().toLowerCase();
+            
+            if (url.includes('facebook.com') || url.includes('fb.com')) {
+                selectPlatform('facebook');
+            } else if (url.includes('instagram.com')) {
+                selectPlatform('instagram');
+            } else if (url.includes('tiktok.com')) {
+                selectPlatform('tiktok');
+            } else if (url.includes('pinterest.com')) {
+                selectPlatform('pinterest');
+            } else if (url.includes('twitter.com') || url.includes('x.com')) {
+                selectPlatform('twitter');
+            } else if (url.includes('spotify.com')) {
+                selectPlatform('spotify');
+            } else if (url.includes('t.me')) {
+                selectPlatform('telegram');
+            }
+        });
+
+        function selectPlatform(platform) {
+            platformBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.platform === platform) {
+                    btn.classList.add('active');
+                    selectedPlatform = platform;
+                }
+            });
+            updateDownloadButton();
+        }
+
+        // Enter key support
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !downloadBtn.disabled) {
+                downloadBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
+
