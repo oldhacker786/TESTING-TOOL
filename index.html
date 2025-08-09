@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mugjy 1 - Code Generator Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">
+                <i class="fas fa-code"></i>
+                Mugjy 1 - Code Generator
+            </h1>
+            <p class="subtitle">Generate custom code from your API and dissertation</p>
+        </header>
+
+        <main class="main-content">
+            <form id="codeGeneratorForm" class="generator-form">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label for="apiInput" class="input-label">
+                            <i class="fas fa-key"></i>
+                            Enter Your API Here
+                        </label>
+                        <textarea 
+                            id="apiInput" 
+                            name="api" 
+                            class="input-field api-input" 
+                            placeholder="Paste your API key or endpoint here..."
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="dissertationInput" class="input-label">
+                            <i class="fas fa-file-text"></i>
+                            Enter Dissertation
+                        </label>
+                        <textarea 
+                            id="dissertationInput" 
+                            name="dissertation" 
+                            class="input-field dissertation-input" 
+                            placeholder="Describe what you want your code to do..."
+                            required
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="coding-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-laptop-code"></i>
+                        Select Coding Type
+                    </h3>
+                    
+                    <div class="coding-options">
+                        <button type="button" class="code-btn telegram-btn" data-type="telegram">
+                            <i class="fab fa-telegram"></i>
+                            <span>Telegram Bot Code</span>
+                        </button>
+                        
+                        <button type="button" class="code-btn html-btn" data-type="html">
+                            <i class="fab fa-html5"></i>
+                            <span>HTML Website Code</span>
+                        </button>
+                        
+                        <button type="button" class="code-btn termux-btn" data-type="termux">
+                            <i class="fas fa-terminal"></i>
+                            <span>Termux Based Code</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="output-section" id="outputSection" style="display: none;">
+                    <h3 class="section-title">
+                        <i class="fas fa-code"></i>
+                        Generated Code
+                    </h3>
+                    <div class="code-output">
+                        <div class="code-header">
+                            <span id="codeType" class="code-type"></span>
+                            <button type="button" id="copyBtn" class="copy-btn">
+                                <i class="fas fa-copy"></i>
+                                Copy Code
+                            </button>
+                        </div>
+                        <pre id="generatedCode" class="code-content"></pre>
+                    </div>
+                </div>
+
+                <div class="loading" id="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>🤖 AI is generating your code...</p>
+                    <p style="font-size: 0.9rem; opacity: 0.8;">This may take a few moments</p>
+                </div>
+            </form>
+        </main>
+
+        <footer class="footer">
+            <div class="branding">
+                <p class="powered-by">
+                    <i class="fas fa-bolt"></i>
+                    POWERED BY OLD-STUDIO
+                </p>
+                <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-link" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                    FOLLOW ON WHATSAPP
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
+
