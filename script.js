@@ -6,7 +6,7 @@ function sendOTP() {
   }
 
   // 🔴 Replace with your OTP API
-  console.log("Sending OTP to:", number);
+  console.log("https://selfcare-msa-prod.jazz.com.pk/onboarding/loginbyotp", number);
 
   document.getElementById("step1").style.display = "none";
   document.getElementById("step2").style.display = "block";
@@ -30,7 +30,7 @@ function verifyOTP() {
 
 function claimGift() {
   // 🔴 Replace with your REAL Gift Claim API
-  console.log("Claiming Gift...");
+  console.log("https://selfcare-msa-prod.jazz.com.pk/gamification/claim");
 
   // Example success
   document.getElementById("message").innerText = "🎉 Congratulations! Gift MB Claimed Successfully!";
