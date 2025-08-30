@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAK SIM DATABASE</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="background-animation">
+        <div class="circle circle1"></div>
+        <div class="circle circle2"></div>
+        <div class="circle circle3"></div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-database"></i>
+            <h1>PAK SIM DATABASE</h1>
+            <p class="subtitle">Pakistan SIM Card Information Lookup</p>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <i class="fas fa-phone"></i>
+                <input type="text" id="phoneNumber" placeholder="Enter phone number (e.g., 3052062145)" maxlength="15">
+            </div>
+            <button id="checkDatabase" class="search-btn">
+                <i class="fas fa-search"></i>
+                CHECK DATABASE
+            </button>
+        </div>
+        
+        <div class="result-section" id="resultSection" style="display: none;">
+            <h2><i class="fas fa-info-circle"></i> Search Results</h2>
+            <div class="result-card" id="resultCard">
+                <div class="loading" id="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Searching database...</p>
+                </div>
+                <div class="result-content" id="resultContent" style="display: none;">
+                    <div class="result-item">
+                        <span class="label"><i class="fas fa-phone"></i> Mobile:</span>
+                        <span class="value" id="mobile"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label"><i class="fas fa-user"></i> Name:</span>
+                        <span class="value" id="name"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label"><i class="fas fa-id-card"></i> CNIC:</span>
+                        <span class="value" id="cnic"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label"><i class="fas fa-map-marker-alt"></i> Address:</span>
+                        <span class="value" id="address"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label"><i class="fas fa-sim-card"></i> Operator:</span>
+                        <span class="value" id="operator"></span>
+                    </div>
+                </div>
+                <div class="error-content" id="errorContent" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="developer-info">
+                <p><i class="fas fa-code"></i> DEVELOP BY OLD-STUDIO</p>
+                <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank" class="whatsapp-link">
+                    <i class="fab fa-whatsapp"></i>
+                    FOLLOW ON WHATSAPP
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
