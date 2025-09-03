@@ -3,785 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightroom Preset Tool - OLD-STUDIO</title>
+    <title>Image Filter Tool - OLD-STUDIO</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
+            background-color: #f4f4f4;
         }
-
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
         }
-
-        .header {
+        h1, h2 {
             text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
             color: #333;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
-
-        .header p {
-            color: #666;
-            font-size: 1.1rem;
+        .upload-section, .filter-section, .result-section {
             margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
-
-        .workflow {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .step {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .step:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            border-color: #667eea;
-        }
-
-        .step.active {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .step-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .step h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-
-        .step p {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .upload-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
         .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 60px 20px;
+            border: 2px dashed #ccc;
+            padding: 30px;
             text-align: center;
-            transition: all 0.3s ease;
             cursor: pointer;
-            background: rgba(102, 126, 234, 0.05);
         }
-
-        .upload-area:hover {
-            border-color: #764ba2;
-            background: rgba(118, 75, 162, 0.1);
-            transform: translateY(-2px);
+        .upload-area.hover {
+            border-color: #333;
         }
-
-        .upload-area.dragover {
-            border-color: #764ba2;
-            background: rgba(118, 75, 162, 0.15);
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 4rem;
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-
-        .upload-text {
-            color: #333;
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .upload-subtext {
-            color: #666;
-            font-size: 1rem;
-        }
-
         #imageInput {
             display: none;
         }
-
-        .preset-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
-
-        .preset-section h3 {
-            color: #333;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+        .image-preview-container {
             text-align: center;
+            margin-top: 15px;
         }
-
-        .preset-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 10px;
+        #originalImage, #processedImage {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+            margin: 10px;
         }
-
-        .preset-item {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
         }
-
-        .preset-item:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .preset-item.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .preset-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .process-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            display: none;
-        }
-
-        .magic-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        .filter-buttons button {
+            background-color: #007bff;
             color: white;
             border: none;
-            padding: 20px 50px;
-            border-radius: 50px;
-            font-size: 1.3rem;
-            font-weight: 600;
+            padding: 10px 15px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            margin-bottom: 20px;
+            font-size: 16px;
         }
-
-        .magic-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        .filter-buttons button:hover {
+            background-color: #0056b3;
         }
-
-        .magic-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
+        .filter-buttons button.active {
+            background-color: #28a745;
         }
-
-        .loading {
-            display: none;
-            margin-top: 20px;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #f0f0f0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .status-text {
-            color: #667eea;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .result-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
-
-        .image-comparison {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .image-container {
-            text-align: center;
-        }
-
-        .image-container h4 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .image-preview {
-            width: 100%;
-            max-width: 400px;
-            height: 300px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 2px solid #eee;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .download-btn {
-            background: #28a745;
+        #downloadBtn {
+            background-color: #28a745;
             color: white;
             border: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            font-size: 18px;
+            display: block;
+            margin: 20px auto 0;
         }
-
-        .download-btn:hover {
-            background: #218838;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        #downloadBtn:hover {
+            background-color: #218838;
         }
-
         .footer {
             text-align: center;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid #eee;
+            margin-top: 30px;
+            color: #666;
         }
-
-        .footer h4 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .whatsapp-btn {
-            background: #25d366;
-            color: white;
+        .footer a {
+            color: #007bff;
             text-decoration: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
         }
-
-        .whatsapp-btn:hover {
-            background: #128c7e;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .workflow {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .image-comparison {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .preset-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-        }
-
-        .api-status {
-            background: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 600;
-            border: 1px solid rgba(255, 193, 7, 0.3);
-            text-align: center;
-        }
-
-        .api-status.connected {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-            border-color: rgba(40, 167, 69, 0.3);
-        }
-
-        .api-status.error {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-            border-color: rgba(220, 53, 69, 0.3);
+        .footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>📸 Lightroom Preset Tool</h1>
-            <p>Transform your images with professional Lightroom presets</p>
-            <div class="api-status" id="apiStatus">
-                🔄 Connecting to server...
-            </div>
-        </div>
+        <h1>📸 Image Filter Tool</h1>
+        <p style="text-align: center;">Apply basic filters to your images directly in the browser!</p>
 
-        <div class="workflow">
-            <div class="step active" id="step1">
-                <span class="step-icon">📤</span>
-                <h3>UPLOAD YOUR IMAGES</h3>
-                <p>Drag & drop or click to upload your photos</p>
-            </div>
-            <div class="step" id="step2">
-                <span class="step-icon">🎨</span>
-                <h3>SELECT PRESETS</h3>
-                <p>Choose from 150+ professional presets</p>
-            </div>
-            <div class="step" id="step3">
-                <span class="step-icon">✨</span>
-                <h3>START MAGIC</h3>
-                <p>Apply the preset to your image</p>
-            </div>
-            <div class="step" id="step4">
-                <span class="step-icon">💾</span>
-                <h3>DOWNLOAD IMAGE</h3>
-                <p>Get your enhanced photo</p>
-            </div>
-        </div>
-
-        <div class="upload-section" id="uploadSection">
+        <div class="upload-section">
+            <h2>UPLOAD YOUR IMAGES</h2>
             <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">📸</div>
-                <div class="upload-text">UPLOAD YOUR IMAGES</div>
-                <div class="upload-subtext">Drag & drop your photos here or click to browse<br>Supports JPG, PNG, WebP formats</div>
+                Drag & drop your photos here or click to browse
+                <input type="file" id="imageInput" accept="image/*">
             </div>
-            <input type="file" id="imageInput" accept="image/*" multiple>
-        </div>
-
-        <div class="preset-section" id="presetSection">
-            <h3>🎨 SELECT PRESETS</h3>
-            <div class="preset-grid" id="presetGrid">
-                <!-- Presets will be loaded dynamically -->
+            <div class="image-preview-container">
+                <img id="originalImage" src="" alt="Original Image" style="display:none;">
+                <canvas id="imageCanvas" style="display:none;"></canvas>
             </div>
         </div>
 
-        <div class="process-section" id="processSection">
-            <button class="magic-btn" id="magicBtn">
-                ✨ START MAGIC ✨
-            </button>
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div class="status-text" id="statusText">Processing your image...</div>
+        <div class="filter-section" style="display:none;">
+            <h2>SELECT FILTERS</h2>
+            <div class="filter-buttons" id="filterButtons">
+                <button data-filter="none">Original</button>
+                <button data-filter="grayscale">Grayscale</button>
+                <button data-filter="sepia">Sepia</button>
+                <button data-filter="invert">Invert</button>
+                <button data-filter="brightness">Brightness +20%</button>
+                <button data-filter="contrast">Contrast +20%</button>
+                <button data-filter="saturate">Saturate +50%</button>
             </div>
         </div>
 
-        <div class="result-section" id="resultSection">
-            <div class="image-comparison">
-                <div class="image-container">
-                    <h4>Original Image</h4>
-                    <img class="image-preview" id="originalImage" alt="Original">
-                </div>
-                <div class="image-container">
-                    <h4>Enhanced Image</h4>
-                    <img class="image-preview" id="processedImage" alt="Processed">
-                </div>
-            </div>
-            <div style="text-align: center;">
-                <button class="download-btn" id="downloadBtn">
-                    💾 DOWNLOAD IMAGE
-                </button>
-            </div>
-        </div>
-
-        <div class="footer">
-            <h4>DEVELOP BY OLD-STUDIO</h4>
-            <a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" class="whatsapp-btn" target="_blank">
-                <span>📱</span>
-                FOLLOW ON WHATSAPP
-            </a>
+        <div class="result-section" style="display:none;">
+            <h2>DOWNLOAD IMAGE</h2>
+            <img id="processedImage" src="" alt="Processed Image">
+            <button id="downloadBtn">DOWNLOAD IMAGE</button>
         </div>
     </div>
 
+    <div class="footer">
+        <p>DEVELOP BY OLD-STUDIO</p>
+        <p><a href="https://whatsapp.com/channel/0029VavHzv259PwTIz1XxJ09" target="_blank">FOLLOW ON WHATSAPP</a></p>
+    </div>
+
     <script>
-        // Configuration - Using the public API URL
-        const API_BASE_URL = 'http://control.bot-hosting.net:21171';
+        const uploadArea = document.getElementById("uploadArea");
+        const imageInput = document.getElementById("imageInput");
+        const originalImage = document.getElementById("originalImage");
+        const imageCanvas = document.getElementById("imageCanvas");
+        const ctx = imageCanvas.getContext("2d");
+        const filterSection = document.querySelector(".filter-section");
+        const filterButtons = document.getElementById("filterButtons");
+        const resultSection = document.querySelector(".result-section");
+        const processedImage = document.getElementById("processedImage");
+        const downloadBtn = document.getElementById("downloadBtn");
 
-        // Global variables
-        let uploadedImages = [];
-        let selectedPreset = null;
-        let processedImageData = null;
-        let currentImageIndex = 0;
-        let presets = [];
+        let currentImage = null;
+        let currentFilter = "none";
 
-        // DOM elements
-        const apiStatus = document.getElementById('apiStatus');
-        const uploadArea = document.getElementById('uploadArea');
-        const imageInput = document.getElementById('imageInput');
-        const uploadSection = document.getElementById('uploadSection');
-        const presetSection = document.getElementById('presetSection');
-        const processSection = document.getElementById('processSection');
-        const resultSection = document.getElementById('resultSection');
-        const presetGrid = document.getElementById('presetGrid');
-        const magicBtn = document.getElementById('magicBtn');
-        const loading = document.getElementById('loading');
-        const progressFill = document.getElementById('progressFill');
-        const statusText = document.getElementById('statusText');
-        const originalImage = document.getElementById('originalImage');
-        const processedImage = document.getElementById('processedImage');
-        const downloadBtn = document.getElementById('downloadBtn');
+        // Handle image upload (click)
+        uploadArea.addEventListener("click", () => imageInput.click());
+        imageInput.addEventListener("change", (e) => handleImage(e.target.files[0]));
 
-        // Step elements
-        const steps = {
-            step1: document.getElementById('step1'),
-            step2: document.getElementById('step2'),
-            step3: document.getElementById('step3'),
-            step4: document.getElementById('step4')
-        };
-
-        // Initialize
-        checkAPIStatus();
-        loadPresets();
-
-        // API Functions
-        async function checkAPIStatus() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/status`);
-                const data = await response.json();
-                
-                if (response.ok) {
-                    apiStatus.textContent = '✅ Server Connected - Ready to process images';
-                    apiStatus.className = 'api-status connected';
-                } else {
-                    throw new Error('API not responding');
-                }
-            } catch (error) {
-                apiStatus.textContent = '❌ Server Connection Failed - Please try again later';
-                apiStatus.className = 'api-status error';
-            }
-        }
-
-        async function loadPresets() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/presets`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    presets = data.presets;
-                    displayPresets();
-                } else {
-                    // Fallback to hardcoded preset list if API fails
-                    generatePresetList();
-                }
-            } catch (error) {
-                // Fallback to hardcoded preset list if API fails
-                generatePresetList();
-            }
-        }
-
-        function generatePresetList() {
-            // Generate preset list based on the files we know exist
-            presets = [];
-            for (let i = 1; i <= 99; i++) {
-                presets.push({
-                    id: `mix2vfx_${i}`,
-                    name: `Mix2VFX Preset ${i}`,
-                    filename: `mix2vfx (${i}).xmp`
-                });
-            }
-            displayPresets();
-        }
-
-        function displayPresets() {
-            presetGrid.innerHTML = '';
-            presets.forEach(preset => {
-                const presetItem = document.createElement('div');
-                presetItem.className = 'preset-item';
-                presetItem.innerHTML = `
-                    <div class="preset-name">${preset.name}</div>
-                `;
-                presetItem.addEventListener('click', () => selectPreset(preset, presetItem));
-                presetGrid.appendChild(presetItem);
-            });
-        }
-
-        function selectPreset(preset, element) {
-            // Remove previous selection
-            document.querySelectorAll('.preset-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-            
-            // Select current preset
-            element.classList.add('selected');
-            selectedPreset = preset;
-            
-            updateSteps();
-            showProcessSection();
-        }
-
-        function updateSteps() {
-            // Reset all steps
-            Object.values(steps).forEach(step => step.classList.remove('active'));
-            
-            if (uploadedImages.length > 0) {
-                steps.step1.classList.add('active');
-                if (selectedPreset) {
-                    steps.step2.classList.add('active');
-                    if (processedImageData) {
-                        steps.step3.classList.add('active');
-                        steps.step4.classList.add('active');
-                    }
-                }
-            }
-        }
-
-        function showPresetSection() {
-            presetSection.style.display = 'block';
-            updateSteps();
-        }
-
-        function showProcessSection() {
-            if (uploadedImages.length > 0 && selectedPreset) {
-                processSection.style.display = 'block';
-                magicBtn.disabled = false;
-            }
-        }
-
-        function showResultSection() {
-            resultSection.style.display = 'block';
-            updateSteps();
-        }
-
-        // Upload functionality
-        uploadArea.addEventListener('click', function() {
-            imageInput.click();
-        });
-
-        uploadArea.addEventListener('dragover', function(e) {
+        // Handle image upload (drag & drop)
+        uploadArea.addEventListener("dragover", (e) => {
             e.preventDefault();
-            uploadArea.classList.add('dragover');
+            uploadArea.classList.add("hover");
         });
-
-        uploadArea.addEventListener('dragleave', function(e) {
+        uploadArea.addEventListener("dragleave", (e) => {
             e.preventDefault();
-            uploadArea.classList.remove('dragover');
+            uploadArea.classList.remove("hover");
         });
-
-        uploadArea.addEventListener('drop', function(e) {
+        uploadArea.addEventListener("drop", (e) => {
             e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            handleImageUpload(files);
+            uploadArea.classList.remove("hover");
+            handleImage(e.dataTransfer.files[0]);
         });
 
-        imageInput.addEventListener('change', function(e) {
-            handleImageUpload(e.target.files);
-        });
+        function handleImage(file) {
+            if (!file || !file.type.startsWith("image/")) return;
 
-        function handleImageUpload(files) {
-            if (files.length === 0) return;
-
-            uploadedImages = [];
-            for (let file of files) {
-                if (file.type.startsWith('image/')) {
-                    uploadedImages.push(file);
-                }
-            }
-
-            if (uploadedImages.length > 0) {
-                // Show first image preview
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    originalImage.src = e.target.result;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalImage.src = e.target.result;
+                originalImage.style.display = "block";
+                currentImage = new Image();
+                currentImage.onload = () => {
+                    imageCanvas.width = currentImage.width;
+                    imageCanvas.height = currentImage.height;
+                    ctx.drawImage(currentImage, 0, 0);
+                    filterSection.style.display = "block";
+                    resultSection.style.display = "block";
+                    applyFilter("none"); // Apply original filter initially
                 };
-                reader.readAsDataURL(uploadedImages[0]);
-
-                showPresetSection();
-                updateSteps();
-            }
+                currentImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
-        // Process functionality
-        magicBtn.addEventListener('click', async function() {
-            if (!uploadedImages.length || !selectedPreset) {
-                alert('Please upload an image and select a preset first.');
-                return;
-            }
+        // Apply filters
+        filterButtons.addEventListener("click", (e) => {
+            if (e.target.tagName === "BUTTON") {
+                const filter = e.target.dataset.filter;
+                applyFilter(filter);
 
-            await processImage();
+                // Update active button class
+                filterButtons.querySelectorAll("button").forEach(btn => {
+                    btn.classList.remove("active");
+                });
+                e.target.classList.add("active");
+            }
         });
 
-        async function processImage() {
-            loading.style.display = 'block';
-            magicBtn.disabled = true;
-            statusText.textContent = 'Uploading image...';
-            
-            // Simulate progress
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress > 90) progress = 90;
-                progressFill.style.width = progress + '%';
-            }, 300);
+        function applyFilter(filter) {
+            if (!currentImage) return;
 
-            try {
-                const formData = new FormData();
-                formData.append('image', uploadedImages[currentImageIndex]);
-                formData.append('preset', selectedPreset.filename);
+            // Clear canvas and redraw original image
+            ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+            ctx.drawImage(currentImage, 0, 0);
 
-                statusText.textContent = 'Applying preset...';
+            const imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+            const pixels = imageData.data;
 
-                const response = await fetch(`${API_BASE_URL}/api/apply-preset`, {
-                    method: 'POST',
-                    body: formData
-                });
+            for (let i = 0; i < pixels.length; i += 4) {
+                let r = pixels[i];
+                let g = pixels[i + 1];
+                let b = pixels[i + 2];
 
-                const data = await response.json();
-
-                if (data.success) {
-                    processedImageData = data.image_data;
-                    processedImage.src = data.image_data;
-                    
-                    statusText.textContent = 'Processing complete!';
-                    progressFill.style.width = '100%';
-                    
-                    setTimeout(() => {
-                        loading.style.display = 'none';
-                        progressFill.style.width = '0%';
-                        showResultSection();
-                    }, 1000);
-                } else {
-                    throw new Error(data.message);
+                switch (filter) {
+                    case "grayscale":
+                        const gray = (r + g + b) / 3;
+                        pixels[i] = gray;
+                        pixels[i + 1] = gray;
+                        pixels[i + 2] = gray;
+                        break;
+                    case "sepia":
+                        pixels[i] = (r * 0.393) + (g * 0.769) + (b * 0.189);
+                        pixels[i + 1] = (r * 0.349) + (g * 0.686) + (b * 0.168);
+                        pixels[i + 2] = (r * 0.272) + (g * 0.534) + (b * 0.131);
+                        break;
+                    case "invert":
+                        pixels[i] = 255 - r;
+                        pixels[i + 1] = 255 - g;
+                        pixels[i + 2] = 255 - b;
+                        break;
+                    case "brightness":
+                        const brightnessFactor = 1.2; // +20%
+                        pixels[i] = Math.min(255, r * brightnessFactor);
+                        pixels[i + 1] = Math.min(255, g * brightnessFactor);
+                        pixels[i + 2] = Math.min(255, b * brightnessFactor);
+                        break;
+                    case "contrast":
+                        const contrastFactor = 1.2; // +20%
+                        const intercept = 128 * (1 - contrastFactor);
+                        pixels[i] = Math.min(255, Math.max(0, r * contrastFactor + intercept));
+                        pixels[i + 1] = Math.min(255, Math.max(0, g * contrastFactor + intercept));
+                        pixels[i + 2] = Math.min(255, Math.max(0, b * contrastFactor + intercept));
+                        break;
+                    case "saturate":
+                        const saturateFactor = 1.5; // +50%
+                        const lumR = 0.3086;
+                        const lumG = 0.6094;
+                        const lumB = 0.0820;
+                        const grayS = r * lumR + g * lumG + b * lumB;
+                        pixels[i] = Math.min(255, Math.max(0, grayS + (r - grayS) * saturateFactor));
+                        pixels[i + 1] = Math.min(255, Math.max(0, grayS + (g - grayS) * saturateFactor));
+                        pixels[i + 2] = Math.min(255, Math.max(0, grayS + (b - grayS) * saturateFactor));
+                        break;
+                    case "none":
+                    default:
+                        // No filter, original image
+                        break;
                 }
-                
-            } catch (error) {
-                console.error('Error processing image:', error);
-                alert(`Error processing image: ${error.message}`);
-                statusText.textContent = 'Error occurred';
-                loading.style.display = 'none';
-                progressFill.style.width = '0%';
-            } finally {
-                clearInterval(progressInterval);
-                magicBtn.disabled = false;
             }
+            ctx.putImageData(imageData, 0, 0);
+            processedImage.src = imageCanvas.toDataURL();
+            currentFilter = filter;
         }
 
         // Download functionality
-        downloadBtn.addEventListener('click', function() {
-            if (processedImageData) {
-                const link = document.createElement('a');
-                link.href = processedImageData;
-                link.download = `enhanced_${selectedPreset.name.replace(/\s+/g, '_')}.jpg`;
+        downloadBtn.addEventListener("click", () => {
+            if (processedImage.src) {
+                const link = document.createElement("a");
+                link.download = `filtered_image_${currentFilter}.png`;
+                link.href = processedImage.src;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
             }
         });
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && uploadedImages.length > 0 && selectedPreset && !magicBtn.disabled) {
-                processImage();
-            }
-        });
+        // Set initial active button
+        document.querySelector("button[data-filter=\"none\"]").classList.add("active");
     </script>
 </body>
 </html>
-
