@@ -2,134 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TikTok Search & Download</title>
+  <title>TikTok Search Debug Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      margin: 0;
-      padding: 20px;
-      color: #fff;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      color: #333;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-    }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 70%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
-
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .results {
-      margin-top: 20px;
-    }
-
-    .video-card {
-      background: #f9f9f9;
-      border: 1px solid #eee;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
-      text-align: left;
-    }
-
-    .video-card h3 {
-      margin: 0 0 10px;
-    }
-
-    .video-card a {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 12px;
-      background: #2575fc;
-      color: #fff;
-      border-radius: 6px;
-      text-decoration: none;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input { padding: 10px; width:70%; }
+    button { padding: 10px; }
+    .video-card { border:1px solid #ccc; padding: 10px; margin:10px 0; }
+    .error { color: red; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎵 TikTok Search & Download Tool</h1>
-    <input type="text" id="searchInput" placeholder="Enter keyword...">
-    <button onclick="searchTikTok()">Search</button>
-
-    <div class="results" id="results"></div>
-  </div>
-
+  <h2>TikTok Search & Download Debug</h2>
+  <input type="text" id="searchInput" placeholder="Enter TikTok keyword">
+  <button onclick="search()">Search</button>
+  <div id="results"></div>
   <script>
-    async function searchTikTok() {
-      const query = document.getElementById("searchInput").value.trim();
-      if (!query) {
-        alert("Please enter a keyword");
-        return;
-      }
-
-      const url = `https://bj-tiktok-search.ma-coder-x.workers.dev/?query=${encodeURIComponent(query)}`;
-
-      document.getElementById("results").innerHTML = "<p>Loading...</p>";
-
+    async function search(){
+      const q = document.getElementById('searchInput').value.trim();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = 'Loading...';
+      if(!q) { resultsDiv.innerHTML = '<div class="error">Please enter something</div>'; return; }
       try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (!data.data || data.data.length === 0) {
-          document.getElementById("results").innerHTML = "<p>No results found.</p>";
+        const resp = await fetch(`https://bj-tiktok-search.ma-coder-x.workers.dev/?query=${encodeURIComponent(q)}`);
+        if(!resp.ok) {
+          throw new Error('HTTP status ' + resp.status);
+        }
+        const json = await resp.json();
+        console.log('API response:', json);
+        if(!json.data || json.data.length === 0){
+          resultsDiv.innerHTML = '<div>No results</div>';
           return;
         }
-
-        let html = "";
-        data.data.forEach(video => {
-          html += `
-            <div class="video-card">
-              <h3>${video.title || "No Title"}</h3>
-              <video width="100%" controls>
-                <source src="${video.play}" type="video/mp4">
-              </video>
-              <br>
-              <a href="${video.play}" download>⬇ Download</a>
-            </div>
-          `;
+        let html = '';
+        json.data.forEach(item => {
+          html += `<div class="video-card">
+            <strong>${item.title || 'No Title'}</strong><br>
+            <video width="300" controls src="${item.play}" ></video><br>
+            <a href="${item.play}" download>Download Video</a>
+          </div>`;
         });
-
-        document.getElementById("results").innerHTML = html;
-
-      } catch (err) {
-        document.getElementById("results").innerHTML = "<p>Error loading results.</p>";
+        resultsDiv.innerHTML = html;
+      } catch(err){
         console.error(err);
+        resultsDiv.innerHTML = `<div class="error">Error loading results: ${err.message}</div>`;
       }
     }
   </script>
