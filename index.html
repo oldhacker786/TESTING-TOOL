@@ -1,186 +1,137 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HTML Editor & Live Viewer</title>
+  <meta charset="UTF-8">
+  <title>TikTok Search & Download</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    :root{--bg:#0f1724;--panel:#0b1220;--muted:#94a3b8;--accent:#06b6d4}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
-    body{display:flex;flex-direction:column;background:linear-gradient(180deg,#071027 0%,#071a2a 100%);color:#e6eef6}
-    header{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,0.02);box-shadow:0 1px 0 rgba(255,255,255,0.02)}
-    header h1{font-size:16px;margin:0}
-    .toolbar{margin-left:auto;display:flex;gap:8px}
-    button{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer}
-    button.primary{background:linear-gradient(90deg,var(--accent),#7c3aed);border:none;color:#001}
-    .wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;flex:1;min-height:0}
-    .panel{background:var(--panel);border-radius:10px;padding:8px;display:flex;flex-direction:column;min-height:0}
-    .panel .title{font-size:13px;color:var(--muted);padding:6px 2px}
-    #editor{flex:1;border-radius:8px;overflow:hidden;background:#fff}
-    iframe{flex:1;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:white}
-    .controls{display:flex;gap:8px;align-items:center;padding:6px}
-    .small{font-size:13px;color:var(--muted)}
-    input[type=file]{display:none}
-    .bottom-row{display:flex;gap:8px;align-items:center;padding-top:8px}
-    select{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04);padding:6px;border-radius:6px}
-    .status{margin-left:8px;font-size:12px;color:var(--muted)}
-    @media(max-width:900px){.wrap{grid-template-columns:1fr;}}
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      margin: 0;
+      padding: 20px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      color: #333;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 70%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .results {
+      margin-top: 20px;
+    }
+
+    .video-card {
+      background: #f9f9f9;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .video-card h3 {
+      margin: 0 0 10px;
+    }
+
+    .video-card a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: #2575fc;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>HTML Editor & Live Viewer</h1>
-    <div class="toolbar">
-      <button id="runBtn" class="primary">Run</button>
-      <button id="autoToggle">Auto-run: Off</button>
-      <button id="saveBtn">Save (local)</button>
-      <button id="loadBtn">Load (local)</button>
-      <label for="fileInput" style="display:inline-block"><button id="openBtn">Open File</button></label>
-      <input id="fileInput" type="file" accept=".html,.htm,text/html">
-      <button id="downloadBtn">Download .html</button>
-    </div>
-  </header>  <div class="wrap">
-    <div class="panel">
-      <div class="title">Editor (HTML)</div>
-      <div id="editor">&lt;!doctype html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;meta charset="utf-8" /&gt;
-    &lt;title&gt;My Preview&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;h1&gt;Hello — edit this HTML and press Run&lt;/h1&gt;
-  &lt;/body&gt;
-&lt;/html&gt;</div>
-      <div class="bottom-row">
-        <div class="small">Editor: Ace (built-in). Saved drafts use <code>localStorage</code>.</div>
-        <div class="status" id="saveStatus"></div>
-      </div>
-    </div><div class="panel">
-  <div class="title">Live Preview</div>
-  <div style="display:flex;gap:8px;align-items:center;padding:6px">
-    <div class="small">Device:</div>
-    <select id="deviceSelect">
-      <option value="">Responsive</option>
-      <option value="375x667">iPhone SE (375×667)</option>
-      <option value="414x896">iPhone 11 Pro Max (414×896)</option>
-      <option value="768x1024">iPad (768×1024)</option>
-    </select>
-    <button id="openPreviewBtn">Open in new tab</button>
+  <div class="container">
+    <h1>🎵 TikTok Search & Download Tool</h1>
+    <input type="text" id="searchInput" placeholder="Enter keyword...">
+    <button onclick="searchTikTok()">Search</button>
+
+    <div class="results" id="results"></div>
   </div>
-  <iframe id="preview" sandbox="allow-scripts allow-same-origin" srcdoc=""></iframe>
-</div>
 
-  </div>  <!-- Ace Editor CDN -->  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.2/ace.js" integrity="sha512-/+Y0t8mG3q2xq1oZ3q6j3m1+vQd0s3Jt8o8g2mYw5HnY+Y1YVbW6z1e8g1h3eF7a9rZk1qP2s3n4t5u6v7w8==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>  <script>
-    // Initialize Ace
-    const editorDiv = document.getElementById('editor');
-    const editor = ace.edit(editorDiv, {mode: 'ace/mode/html',theme: 'ace/theme/chrome'});
-    editor.setFontSize(14);
-    editor.session.setUseWrapMode(true);
+  <script>
+    async function searchTikTok() {
+      const query = document.getElementById("searchInput").value.trim();
+      if (!query) {
+        alert("Please enter a keyword");
+        return;
+      }
 
-    const preview = document.getElementById('preview');
-    const runBtn = document.getElementById('runBtn');
-    const autoToggle = document.getElementById('autoToggle');
-    const saveBtn = document.getElementById('saveBtn');
-    const loadBtn = document.getElementById('loadBtn');
-    const fileInput = document.getElementById('fileInput');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const openPreviewBtn = document.getElementById('openPreviewBtn');
-    const deviceSelect = document.getElementById('deviceSelect');
-    const saveStatus = document.getElementById('saveStatus');
+      const url = `https://bj-tiktok-search.ma-coder-x.workers.dev/?query=${encodeURIComponent(query)}`;
 
-    const AUTO_KEY = 'html_editor_auto_run_v1';
-    const DRAFT_KEY = 'html_editor_draft_v1';
+      document.getElementById("results").innerHTML = "<p>Loading...</p>";
 
-    // Load draft if exists
-    if(localStorage.getItem(DRAFT_KEY)){
-      editor.setValue(localStorage.getItem(DRAFT_KEY), -1);
-      saveStatus.textContent = 'Loaded saved draft.';
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.data || data.data.length === 0) {
+          document.getElementById("results").innerHTML = "<p>No results found.</p>";
+          return;
+        }
+
+        let html = "";
+        data.data.forEach(video => {
+          html += `
+            <div class="video-card">
+              <h3>${video.title || "No Title"}</h3>
+              <video width="100%" controls>
+                <source src="${video.play}" type="video/mp4">
+              </video>
+              <br>
+              <a href="${video.play}" download>⬇ Download</a>
+            </div>
+          `;
+        });
+
+        document.getElementById("results").innerHTML = html;
+
+      } catch (err) {
+        document.getElementById("results").innerHTML = "<p>Error loading results.</p>";
+        console.error(err);
+      }
     }
-
-    // Run function
-    function runPreview(){
-      const code = editor.getValue();
-      preview.srcdoc = code;
-      saveStatus.textContent = 'Preview updated: ' + new Date().toLocaleTimeString();
-    }
-
-    runBtn.addEventListener('click', runPreview);
-
-    // Auto-run toggle
-    let autoRun = localStorage.getItem(AUTO_KEY) === '1';
-    function updateAutoUI(){
-      autoToggle.textContent = 'Auto-run: ' + (autoRun? 'On' : 'Off');
-      autoToggle.classList.toggle('primary', autoRun);
-    }
-    updateAutoUI();
-
-    editor.session.on('change', ()=>{
-      localStorage.setItem(DRAFT_KEY, editor.getValue());
-      if(autoRun) runPreview();
-    });
-
-    autoToggle.addEventListener('click', ()=>{
-      autoRun = !autoRun;
-      localStorage.setItem(AUTO_KEY, autoRun? '1' : '0');
-      updateAutoUI();
-    });
-
-    // Save / Load local
-    saveBtn.addEventListener('click', ()=>{
-      localStorage.setItem(DRAFT_KEY, editor.getValue());
-      saveStatus.textContent = 'Saved draft to localStorage.';
-      setTimeout(()=>saveStatus.textContent='',2500);
-    });
-    loadBtn.addEventListener('click', ()=>{
-      const draft = localStorage.getItem(DRAFT_KEY);
-      if(draft){ editor.setValue(draft, -1); saveStatus.textContent='Loaded draft.'; }
-      else saveStatus.textContent='No saved draft found.';
-      setTimeout(()=>saveStatus.textContent='',2500);
-    });
-
-    // Open file
-    fileInput.addEventListener('change', (e)=>{
-      const f = e.target.files[0];
-      if(!f) return;
-      const reader = new FileReader();
-      reader.onload = ()=>{ editor.setValue(reader.result, -1); saveStatus.textContent='File loaded.'; };
-      reader.readAsText(f);
-    });
-
-    // Download
-    downloadBtn.addEventListener('click', ()=>{
-      const blob = new Blob([editor.getValue()], {type:'text/html'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'index.html';
-      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    });
-
-    // Open preview in new tab
-    openPreviewBtn.addEventListener('click', ()=>{
-      const code = editor.getValue();
-      const w = window.open();
-      if(!w) { alert('Pop-up blocked. Allow pop-ups to use this feature.'); return; }
-      w.document.open(); w.document.write(code); w.document.close();
-    });
-
-    // Device select
-    deviceSelect.addEventListener('change', ()=>{
-      const val = deviceSelect.value;
-      if(!val){ preview.style.width = ''; preview.style.height = ''; preview.style.minHeight='300px'; return; }
-      const [w,h] = val.split('x');
-      preview.style.width = w + 'px';
-      preview.style.height = h + 'px';
-    });
-
-    // Initial run
-    runPreview();
-
-    // Keyboard shortcut: Ctrl/Cmd+Enter to run
-    window.addEventListener('keydown',(e)=>{
-      if((e.ctrlKey||e.metaKey) && e.key === 'Enter'){ e.preventDefault(); runPreview(); }
-    });
-  </script></body>
+  </script>
+</body>
 </html>
