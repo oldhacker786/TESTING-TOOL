@@ -1,99 +1,123 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
-}
+document.addEventListener("DOMContentLoaded", () => {
+  const tabs = document.querySelectorAll(".tab-btn");
+  const contents = document.querySelectorAll(".tab-content");
 
-body {
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: #333;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
+  tabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabs.forEach(b => b.classList.remove("active"));
+      contents.forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+  });
 
-.container {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-  max-width: 1000px;
-  width: 100%;
-  overflow: hidden;
-}
+  // DP MAKER
+  const dpUpload = document.getElementById("dpUpload");
+  const dpCanvas = document.getElementById("dpCanvas");
+  const dpCtx = dpCanvas.getContext("2d");
+  const borderColor = document.getElementById("borderColor");
+  const borderSize = document.getElementById("borderSize");
+  const zoomDp = document.getElementById("zoomDp");
+  const downloadDp = document.getElementById("downloadDp");
+  let dpImage = null;
 
-header {
-  text-align: center;
-  padding: 20px;
-  background: #2575fc;
-  color: #fff;
-}
+  function drawDp() {
+    if (!dpImage) return;
+    const size = dpCanvas.width;
+    const radius = size / 2;
 
-nav {
-  display: flex;
-  justify-content: center;
-  background: #eee;
-}
+    dpCtx.clearRect(0, 0, size, size);
 
-.tab-btn {
-  flex: 1;
-  padding: 12px;
-  cursor: pointer;
-  border: none;
-  background: #ddd;
-  font-weight: bold;
-  transition: background 0.3s;
-}
+    // Border
+    dpCtx.beginPath();
+    dpCtx.arc(radius, radius, radius, 0, Math.PI * 2);
+    dpCtx.fillStyle = borderColor.value;
+    dpCtx.fill();
 
-.tab-btn.active {
-  background: #2575fc;
-  color: #fff;
-}
+    // Image
+    dpCtx.save();
+    dpCtx.beginPath();
+    dpCtx.arc(radius, radius, radius - parseInt(borderSize.value), 0, Math.PI * 2);
+    dpCtx.clip();
 
-main {
-  padding: 20px;
-}
+    const zoom = parseFloat(zoomDp.value);
+    const iw = dpImage.width * zoom;
+    const ih = dpImage.height * zoom;
+    dpCtx.drawImage(dpImage, (size - iw) / 2, (size - ih) / 2, iw, ih);
+    dpCtx.restore();
+  }
 
-.tab-content {
-  display: none;
-}
+  dpUpload.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      dpImage = new Image();
+      dpImage.onload = drawDp;
+      dpImage.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 
-.tab-content.active {
-  display: block;
-}
+  [borderColor, borderSize, zoomDp].forEach(input => {
+    input.addEventListener("input", drawDp);
+  });
 
-.preview-container {
-  width: 300px;
-  height: 300px;
-  border: 2px dashed #ccc;
-  margin: 15px 0;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: #fafafa;
-}
+  downloadDp.addEventListener("click", () => {
+    if (!dpImage) return;
+    const link = document.createElement("a");
+    link.download = "profile-picture.png";
+    link.href = dpCanvas.toDataURL("image/png");
+    link.click();
+  });
 
-.preview-container.circle {
-  border-radius: 50%;
-}
+  // FILTERS
+  const filterUpload = document.getElementById("filterUpload");
+  const filterCanvas = document.getElementById("filterCanvas");
+  const fCtx = filterCanvas.getContext("2d");
+  const brightness = document.getElementById("brightness");
+  const contrast = document.getElementById("contrast");
+  const saturation = document.getElementById("saturation");
+  const blur = document.getElementById("blur");
+  const downloadFilter = document.getElementById("downloadFilter");
+  let filterImage = null;
 
-canvas {
-  max-width: 100%;
-  max-height: 100%;
-}
+  function drawFilter() {
+    if (!filterImage) return;
+    fCtx.clearRect(0, 0, filterCanvas.width, filterCanvas.height);
 
-.placeholder {
-  position: absolute;
-  text-align: center;
-  color: #aaa;
-}
+    fCtx.filter = `
+      brightness(${brightness.value}%)
+      contrast(${contrast.value}%)
+      saturate(${saturation.value}%)
+      blur(${blur.value}px)
+    `;
 
-footer {
-  text-align: center;
-  padding: 15px;
-  background: #f1f1f1;
-  color: #666;
-}
+    fCtx.drawImage(filterImage, 0, 0, filterCanvas.width, filterCanvas.height);
+    fCtx.filter = "none";
+  }
+
+  filterUpload.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      filterImage = new Image();
+      filterImage.onload = drawFilter;
+      filterImage.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  [brightness, contrast, saturation, blur].forEach(input => {
+    input.addEventListener("input", drawFilter);
+  });
+
+  downloadFilter.addEventListener("click", () => {
+    if (!filterImage) return;
+    const link = document.createElement("a");
+    link.download = "filtered-image.png";
+    link.href = filterCanvas.toDataURL("image/png");
+    link.click();
+  });
+});
