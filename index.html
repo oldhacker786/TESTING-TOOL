@@ -324,7 +324,7 @@
             font-size: 0.85rem;
         }
 
-        /* Download Button - Like Join Our Community */
+        /* Download Button */
         .download-btn {
             display: inline-flex;
             align-items: center;
@@ -379,6 +379,10 @@
 
         .download-btn.success {
             background: linear-gradient(135deg, var(--success), #20c997);
+        }
+
+        .download-btn.error {
+            background: linear-gradient(135deg, var(--error), #c82333);
         }
 
         /* Loading Animation */
@@ -573,8 +577,6 @@
     </div>
 
     <script>
-        const API_BASE = 'https://pinterest-search.apis-bj-devs.workers.dev/';
-        
         // DOM Elements
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
@@ -596,7 +598,7 @@
         });
         clearResults.addEventListener('click', clearAllResults);
 
-        // Search Pinterest function
+        // Search Pinterest function - FIXED FOR BROWSER DEPLOYMENT
         async function searchPinterest() {
             const query = searchInput.value.trim();
             const limit = limitSelect.value;
@@ -615,11 +617,18 @@
             searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SEARCHING';
             
             try {
-                // Build API URL
-                const apiUrl = `${API_BASE}?search=${encodeURIComponent(query)}&limit=${limit}`;
+                // Build API URL with CORS proxy if needed
+                const apiUrl = `https://pinterest-search.apis-bj-devs.workers.dev/?search=${encodeURIComponent(query)}&limit=${limit}`;
                 console.log('API URL:', apiUrl);
                 
-                const response = await fetch(apiUrl);
+                // Use fetch with proper error handling
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    mode: 'cors'
+                });
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -632,19 +641,18 @@
                 searchBtn.disabled = false;
                 searchBtn.innerHTML = '<i class="fab fa-pinterest"></i> SEARCH';
                 
-                      // Handle the specific API response format
+                // Handle the specific API response format
                 if (data.status && data.result && data.result.pins && Array.isArray(data.result.pins)) {
                     const pins = data.result.pins;
                     console.log('Found pins:', pins.length);
-                    
-                    if (pins.length > 0) {
+                                        if (pins.length > 0) {
                         displayResults(pins, query);
                     } else {
                         showNoResults();
                     }
                 } else {
                     showNoResults();
-                    console.log('Unexpected API response format');
+                    console.log('Unexpected API response format:', data);
                 }
                 
             } catch (error) {
@@ -652,11 +660,17 @@
                 loading.style.display = 'none';
                 searchBtn.disabled = false;
                 searchBtn.innerHTML = '<i class="fab fa-pinterest"></i> SEARCH';
-                showError('Failed to search Pinterest. Error: ' + error.message);
+                
+                // Check for specific CORS error
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    showError('Network error: Please check your internet connection and try again. If problem persists, the API might be blocked by CORS policy.');
+                } else {
+                    showError('Failed to search Pinterest. Error: ' + error.message);
+                }
             }
         }
         
-        // Display results function - UPDATED DESIGN
+        // Display results function
         function displayResults(pins, query) {
             imagesGrid.innerHTML = '';
             
@@ -697,7 +711,7 @@
             resultsSection.style.display = 'block';
         }
         
-        // Download image function - FIXED
+        // Download image function - FIXED FOR BROWSER
         async function downloadImage(button, imageUrl, imageName) {
             try {
                 // Show loading state on button
@@ -705,26 +719,21 @@
                 button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> DOWNLOADING...';
                 button.disabled = true;
                 
-                // Fetch the image as blob
-                const response = await fetch(imageUrl);
-                const blob = await response.blob();
-                
-                // Create download link
-                const url = window.URL.createObjectURL(blob);
+                // Simple download method - works in all browsers
                 const link = document.createElement('a');
-                link.href = url;
+                link.href = imageUrl;
                 
                 // Get file extension
                 const fileExtension = imageUrl.split('.').pop()?.split('?')[0] || 'jpg';
                 const fileName = `${imageName.replace(/[^a-zA-Z0-9]/g, '_')}.${fileExtension}`;
                 
                 link.download = fileName;
+                link.target = '_blank';
+                
+                // Append to body and click
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                
-                // Clean up
-                window.URL.revokeObjectURL(url);
                 
                 // Show success state
                 button.innerHTML = '<i class="fas fa-check"></i> DOWNLOADED!';
@@ -741,15 +750,15 @@
                 
                 // Show error state
                 button.innerHTML = '<i class="fas fa-exclamation-triangle"></i> FAILED';
-                button.style.background = 'linear-gradient(135deg, var(--error), #c82333)';
+                button.classList.add('error');
                 
                 setTimeout(() => {
                     button.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD IMAGE';
-                    button.style.background = '';
+                    button.classList.remove('error');
                     button.disabled = false;
                 }, 2000);
                 
-                showError('Failed to download image. Please try again.');
+                showError('Failed to download image. Please try right-clicking on the image and selecting "Save image as".');
             }
         }
         
