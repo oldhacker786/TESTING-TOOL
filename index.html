@@ -21,8 +21,6 @@
         .status-badge { padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; }
         .connected { background: #10b981; }
         .disconnected { background: #ef4444; }
-        
-        /* Loading Bar Styles */
         .progress-container { width: 100%; background-color: var(--border); border-radius: 10px; margin-top: 15px; display: none; }
         .progress-bar { width: 0%; height: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 10px; transition: width 0.5s ease; }
         .loading-text { font-size: 12px; color: var(--muted); margin-top: 5px; text-align: center; }
@@ -48,6 +46,10 @@
                     <input type="text" id="userIdInput" class="form-control" placeholder="Enter Unique Bot Name (e.g., MyBot1)">
                     <button class="btn btn-primary" onclick="selectUser()">CREATE / SELECT</button>
                 </div>
+                <div id="connectionLoader" class="text-center hidden">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted">Connecting to server...</p>
+                </div>
             </div>
         </div>
 
@@ -61,7 +63,6 @@
                     </div>
                     <button class="btn btn-primary w-100" id="pairBtn">GENERATE CODE</button>
                     
-                    <!-- Live Loading Bar -->
                     <div id="progressContainer" class="progress-container">
                         <div id="progressBar" class="progress-bar"></div>
                         <div class="loading-text">⏳ Connecting to WhatsApp... Please wait.</div>
@@ -89,15 +90,35 @@
 
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
-        const socket = io();
+        // HARDCODED SERVER URL
+        const SERVER_URL = "http://prem-eu5.bot-hosting.cloud:20664";
+        
+        const socket = io(SERVER_URL, {
+            transports: ['websocket', 'polling']
+        });
+
         let currentUserId = null;
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('connect_error', (err) => {
+            console.error('Connection Error:', err);
+        });
 
         function selectUser() {
             const userId = document.getElementById('userIdInput').value.trim();
             if (!userId) return alert('Enter a bot name');
+            
+            if (!socket.connected) {
+                return alert('Not connected to server. Please wait or refresh.');
+            }
+
             currentUserId = userId;
             socket.emit('set-user', userId);
             document.getElementById('activeBotName').innerText = "Bot: " + userId;
+            document.getElementById('setupSection').classList.add('hidden');
             document.getElementById('userDashboard').classList.remove('hidden');
             document.getElementById('stage1').classList.remove('hidden');
             document.getElementById('stage2').classList.add('hidden');
@@ -108,7 +129,6 @@
         });
 
         socket.on('pairing-code', (code) => {
-            // Hide loading bar and show code
             document.getElementById('progressContainer').style.display = 'none';
             document.getElementById('pairingResult').innerText = "YOUR CODE: " + code;
         });
@@ -139,7 +159,6 @@
             const number = document.getElementById('pairNumber').value;
             if (!number) return alert('Enter number');
             
-            // Show and animate loading bar
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
             const pairingResult = document.getElementById('pairingResult');
@@ -148,7 +167,6 @@
             progressContainer.style.display = 'block';
             progressBar.style.width = '0%';
             
-            // Simulate progress while waiting for socket response
             let width = 0;
             const interval = setInterval(() => {
                 if (width >= 90) {
@@ -164,8 +182,8 @@
 
         document.getElementById('logoutBtn').onclick = () => {
             socket.emit('logout', currentUserId);
+            location.reload();
         };
     </script>
 </body>
 </html>
-          
